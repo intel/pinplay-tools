@@ -1,0 +1,19 @@
+See LICENSE.dotproduct-omp and  LICENSE.scripts
+=============================================
+setenv SDE_BUILD_KIT <path to SDE 9.*>
+
+#make sure all the looppoint tools are built:
+cd  ../GlobalLoopPoint/
+./sde-build-GlobalLoopPoint.sh
+
+# Back to this directory
+cd -
+make
+./sde-run.looppoint.global_looppoint.concat.filter.flowcontrol.sh
+...
+# this should end in messages of this form:
+ replaying dotproduct.1_79259.pp/dotproduct.1_79259_1
+ replaying dotproduct.1_79259.pp/dotproduct.1_79259_2
+ replaying dotproduct.1_79259.pp/dotproduct.1_79259_3
+ replaying dotproduct.1_79259.pp/dotproduct.1_79259_4
+
