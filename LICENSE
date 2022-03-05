@@ -1,17 +1,19 @@
-All Intel-developed code is released under BSD 3-clause "New" or "Revised" License
-See specific entries below for external, non-Intel, code
+All Intel-developed code is released under the BSD 3-clause "New" or "Revised" License.
+
+See specific entries below for non-Intel code:
+
 pinplay-scripts
 ---------------
-  * pinplay-scripts/ make-balanced-concat-vectors.py
+  o pinplay-scripts/ make-balanced-concat-vectors.py
      Developed by National University of Singapore under an Intel sponsored joint reaserch project and relased under MIT License (see file header)
 
 GlobalLoopPoint
 --------------
-  * Most files in Drivers/FlowControlLoopPoint 
+  o Most files in Drivers/FlowControlLoopPoint 
      Developed by National University of Singapore under an Intel sponsored joint reaserch project and relased under MIT License (see file header)
 
 dotproduct-omp:
 --------------
-  dotproduct-omp/dot_product_openmp.cpp is released under GNU LGPL. 
+  o dotproduct-omp/dot_product_openmp.cpp is released under GNU LGPL. 
       Origin://people.math.sc.edu/Burkardt/cpp_src/openmp/dot_product_openmp.cpp
-        See "LICENSE.dotproduct-omp
+        See "LICENSE.dotproduct-omp"
