@@ -1,4 +1,6 @@
 #!/bin/bash
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
 export OMP_NUM_THREADS=8
 SLICESIZE=80000000
 WARMUP_FACTOR=0

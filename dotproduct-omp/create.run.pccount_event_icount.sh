@@ -1,4 +1,6 @@
 #!/bin/bash
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
 export PATH=$PIN_ROOT/extras/pinplay/scripts/:$PATH
 export PATH=`pwd`/scripts:$PATH
 export OMP_NUM_THREADS=8

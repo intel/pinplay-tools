@@ -1,4 +1,6 @@
 #!/bin/bash
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
 for pb in `ls *.pp/*.address`
 do
  prefix=`echo $pb | sed '/.address/s///'`

@@ -1,3 +1,5 @@
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
 export KMP_SETTINGS=true
 export KMP_HW_SUBSET=1S,8C,1T
 export OMP_NUM_THREADS=8

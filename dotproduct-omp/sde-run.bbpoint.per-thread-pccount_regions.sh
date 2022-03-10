@@ -1,4 +1,6 @@
 #!/bin/bash
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
 # uses $SDE_BUILD_KIT/pinkit/sde-example/example/pcregions_control.cpp
 # First build 32-bit and 64-bit versions of the relevant tool and copy
 # them to the SDE_BUILD_KIT tools directories where 'sde' expects them

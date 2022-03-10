@@ -1,4 +1,6 @@
 #!/bin/bash
+#Copyright (C) 2022 Intel Corporation
+#SPDX-License-Identifier: BSD-3-Clause
 export PATH=`pwd`/scripts:$PATH
 SLICESIZE=10000
 WARMUPFACTOR=1
