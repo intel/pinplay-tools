@@ -1,10 +1,10 @@
 #!/bin/bash
 #Copyright (C) 2022 Intel Corporation
 #SPDX-License-Identifier: BSD-3-Clause
-export PATH=`pwd`/scripts:$PATH
-SLICESIZE=10000
-WARMUPFACTOR=1
-INPUT=cversion
+SLICESIZE=80000000
+WARMUP_FACTOR=1
+PROGRAM=dotproduct
+INPUT=1
 
 echo "program.input.rid, weight, exp_W+R_length, act_W+R_length, slicesize, filtered_R_length, unfiltered_R_length"
     pbdir=whole_program.$INPUT
@@ -33,11 +33,11 @@ echo "program.input.rid, weight, exp_W+R_length, act_W+R_length, slicesize, filt
 # # RegionId = 3 Slice = 46 Icount = 1380151514 Length = 30000138 Weight = 0.05195 Multiplier = 4.000 ClusterSlicecount = 4 ClusterIcount = 120000223
       slice=`echo  $rec | awk '{print $7}'`
       weight=`echo  $rec | awk '{print $16}'`
-      flag=`echo "$slice > $WARMUPFACTOR" | bc`
+      flag=`echo "$slice > $WARMUP_FACTOR" | bc`
       wf=$slice
       if [ $flag -eq 1 ];
       then
-        wf=$WARMUPFACTOR
+        wf=$WARMUP_FACTOR
       fi
       act=`pinballicount.sh $rpb dum`
       exp=`echo "$wf*$SLICESIZE + $SLICESIZE" | bc`

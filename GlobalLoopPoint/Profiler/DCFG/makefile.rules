@@ -38,7 +38,8 @@ LIB_ROOTS := libglobalprofiler
 ##############################################################
 
 # See makefile.default.rules for the default build rules.
-TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(SDE_ROOT)/include -I$(PINPLAY_ROOT)/include
+TOOL_CXXFLAGS := -I$(SDE_ROOT)/include $(TOOL_CXXFLAGS)
+TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(PINPLAY_ROOT)/include
 
 ifeq ($(OS),Windows_NT)
 TOOL_LPATHS += /LIBPATH:$(SDE_ROOT)/lib/$(TARGET) /LIBPATH:$(PINPLAY_ROOT)/$(TARGET)

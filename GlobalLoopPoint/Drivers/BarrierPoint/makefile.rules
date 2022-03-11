@@ -32,7 +32,8 @@ TOOL_ROOTS := $(SDE_TOOLS) $(PINPLAY_TOOLS)
 ##############################################################
 
 # See makefile.default.rules for the default build rules.
-TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(SDE_ROOT)/include -I$(PINPLAY_ROOT)/include -I ../../RegionControllers/PCcount  -I../../RegionControllers/Icount -I../../Profiler/DCFG/
+TOOL_CXXFLAGS := -I$(SDE_ROOT)/include $(TOOL_CXXFLAGS)
+TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(PINPLAY_ROOT)/include -I ../../RegionControllers/PCcount  -I../../RegionControllers/Icount -I../../Profiler/DCFG/
 
 ifeq ($(OS),Windows_NT)
 TOOL_LPATHS += /LIBPATH:$(SDE_ROOT)/lib/$(TARGET) /LIBPATH:$(PINPLAY_ROOT)/$(TARGET)
