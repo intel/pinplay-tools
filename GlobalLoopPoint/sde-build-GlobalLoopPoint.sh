@@ -7,6 +7,15 @@ if [[  -z $SDE_BUILD_KIT ]]; then
     exit 1
 fi
 
+cd ./EventCounter
+make clean TARGET=ia32
+make clean TARGET=intel64
+make build TARGET=ia32 
+make build TARGET=intel64
+make clean TARGET=ia32
+make clean TARGET=intel64
+cd -
+
 cd ./Profiler/DCFG
 make clean
 make TARGET=ia32

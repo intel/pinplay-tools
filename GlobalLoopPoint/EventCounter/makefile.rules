@@ -20,8 +20,10 @@
 ###### Place all generic definitions here ######
 
 # Define the SDE example pin tools to build
+PB2ELF := $(HOME)/pinball2elf
+DCFG := ../Profiler/DCFG/
 SDE_TOOLS := 
-PINPLAY_TOOLS := pinplay-branch-predictor pinplay-debugger pinplay-driver pinplay_controller pinplay_debugtrace pinplay_isimpoint pinplay_strace pinplayatrace 
+PINPLAY_TOOLS := global_event_icounter
 
 TOOL_ROOTS := $(SDE_TOOLS) $(PINPLAY_TOOLS)
 
@@ -33,7 +35,7 @@ TOOL_ROOTS := $(SDE_TOOLS) $(PINPLAY_TOOLS)
 
 # See makefile.default.rules for the default build rules.
 TOOL_CXXFLAGS := -I$(SDE_ROOT)/include $(TOOL_CXXFLAGS)
-TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(PINPLAY_ROOT)/include
+TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(PINPLAY_ROOT)/include -I ../RegionControllers/PCcount  -I../RegionControllers/Icount -I$(PB2ELF)/pintools/PinballSYSState/ -I$(DCFG)
 
 ifeq ($(OS),Windows_NT)
 TOOL_LPATHS += /LIBPATH:$(SDE_ROOT)/lib/$(TARGET) /LIBPATH:$(PINPLAY_ROOT)/$(TARGET)
@@ -44,4 +46,6 @@ TOOL_LPATHS += -L$(SDE_ROOT)/lib/$(TARGET) -L$(PINPLAY_ROOT)/$(TARGET)
 TOOL_LPATHS += -lpinplay -lsde -lpinplay -lsde -lbz2 -lzlib
 endif
 
+build: obj-$(TARGET)/global_event_icounter.so
+	cp obj-$(TARGET)/global_event_icounter.so $(SDE_BUILD_KIT)/$(TARGET)/sde-global-event-icounter.so
 
