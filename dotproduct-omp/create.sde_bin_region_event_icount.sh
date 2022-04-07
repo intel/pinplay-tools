@@ -48,9 +48,9 @@ source ./$sch.env.sh
     fi
     prefix=`ls whole_program.$i/*.address | sed '/.address/s///'`
     wpb=$prefix
-      ripno=`grep "^rip" $wpb.global.log | awk '{print $2}'`
-      regfile=`echo $wpb*.0.result | sed '/result/s//reg.bz2/'`
-      rip=`bzcat $regfile| grep -e "^$ripno" | awk '{print $NF}' | head -1 | endian.sh`
+      #ripno=`grep "^rip" $wpb.global.log | awk '{print $2}'`
+      #regfile=`echo $wpb*.0.result | sed '/result/s//reg.bz2/'`
+      #rip=`bzcat $regfile| grep -e "^$ripno" | awk '{print $NF}' | head -1 | endian.sh`
     prefix=`basename $prefix`
     ppdir=$prefix.pp
     mkdir -p $ppdir

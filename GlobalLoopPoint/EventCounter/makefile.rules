@@ -20,7 +20,7 @@
 ###### Place all generic definitions here ######
 
 # Define the SDE example pin tools to build
-PB2ELF := $(HOME)/pinball2elf
+PB2ELF := $(PINBALL2ELF)
 DCFG := ../Profiler/DCFG/
 SDE_TOOLS := 
 PINPLAY_TOOLS := global_event_icounter

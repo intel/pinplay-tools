@@ -64,7 +64,7 @@ COMMAND="$PIN_ROOT/pin -t $ROIPERF -probecontrol:in probe.in -probecontrol:verbo
   for run in 1 2 3 4 5 6 7 8
   do
         echo "RUN: $run $b.$i wp bin "
-        time run.wpbinperf.sh
+        time ./run.wpbinperf.sh
         mv perf.$i.wp.0.perf.txt  $wpb.0.BIN.perf.txt.$run
         cat $wpb.0.BIN.perf.txt.$run
   done
