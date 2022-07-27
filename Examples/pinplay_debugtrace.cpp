@@ -52,9 +52,9 @@ static CONTROL_MANAGER control;
 /* ===================================================================== */
 
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,         "pintool",
-    "o", "debugtrace.out", "trace file");
+    "out", "debugtrace.out", "trace file");
 KNOB<BOOL>   KnobPid(KNOB_MODE_WRITEONCE,                "pintool",
-    "i", "0", "append pid to output");
+    "in", "0", "append pid to output");
 KNOB<THREADID>   KnobWatchThread(KNOB_MODE_WRITEONCE,                "pintool",
     "watch_thread", "-1", "thread to watch, -1 for all");
 KNOB<BOOL>   KnobFlush(KNOB_MODE_WRITEONCE,                "pintool",
@@ -71,7 +71,7 @@ KNOB<BOOL>   KnobTraceMemory(KNOB_MODE_WRITEONCE,       "pintool",
     "memory", "0", "Trace memory");
 KNOB<BOOL>   KnobSilent(KNOB_MODE_WRITEONCE,       "pintool",
     "silent", "0", "Do everything but write file (for debugging).");
-KNOB<BOOL> KnobEarlyOut(KNOB_MODE_WRITEONCE, "pintool", "early_out", "0" , "Exit after tracing the first region.");
+KNOB<BOOL> KnobEarlyOut(KNOB_MODE_WRITEONCE, "pintool", "my_early_out", "0" , "Exit after tracing the first region.");
 
 
 /* ===================================================================== */
@@ -128,7 +128,7 @@ static VOID Handler(EVENT_TYPE ev, VOID *, CONTEXT * ctxt, VOID *, THREADID, boo
         PIN_RemoveInstrumentation();
         if (KnobEarlyOut)
         {
-            cerr << "Exiting due to -early_out" << endl;
+            cerr << "Exiting due to -my_early_out" << endl;
             Fini(0, NULL);
             exit(0);
         }

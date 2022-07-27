@@ -37,7 +37,7 @@ KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,         "pintool",
 KNOB<BOOL>   KnobPid(KNOB_MODE_WRITEONCE,                "pintool",
     "i", "0", "append pid to output");
 KNOB<BOOL>   KnobEarlyOut(KNOB_MODE_WRITEONCE,                "pintool",
-    "early_out", "0", "Exit after reporting a STOP event");
+    "my_early_out", "0", "Exit after reporting a STOP event");
 
 using namespace INSTLIB;
 
@@ -134,7 +134,7 @@ VOID Handler(EVENT_TYPE ev, VOID * v, CONTEXT * ctxt, VOID * ip, THREADID tid,
         PrintIcounts("Stop");
         if(KnobEarlyOut)
         {
-            std::cerr << "Exiting due to -early_out" << endl;
+            std::cerr << "Exiting due to -my_early_out" << endl;
             PIN_ExitApplication(0);
         }
         break;

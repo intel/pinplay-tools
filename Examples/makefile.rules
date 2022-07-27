@@ -32,8 +32,8 @@ TOOL_ROOTS := $(SDE_TOOLS) $(PINPLAY_TOOLS)
 ##############################################################
 
 # See makefile.default.rules for the default build rules.
-TOOL_CXXFLAGS := -I$(SDE_ROOT)/include $(TOOL_CXXFLAGS)
 TOOL_CXXFLAGS += -DSDE_INIT -DPINPLAY -I$(PINPLAY_ROOT)/include
+TOOL_CXXFLAGS := -I$(SDE_ROOT)/include $(TOOL_CXXFLAGS)
 
 ifeq ($(OS),Windows_NT)
 TOOL_LPATHS += /LIBPATH:$(SDE_ROOT)/lib/$(TARGET) /LIBPATH:$(PINPLAY_ROOT)/$(TARGET)
@@ -44,4 +44,12 @@ TOOL_LPATHS += -L$(SDE_ROOT)/lib/$(TARGET) -L$(PINPLAY_ROOT)/$(TARGET)
 TOOL_LPATHS += -lpinplay -lsde -lpinplay -lsde -lbz2 -lzlib
 endif
 
+%${OBJ_SUFFIX}: %.cpp
+	$(CXX) ${MYDEFINES} ${COPT} $(TOOL_CXXFLAGS) $(CXXFLAGS) $(TOOL_INCLUDES) $(PIN_CXXFLAGS) ${COMP_OBJ}$@ $<
+
+pinplay-debugger-shell$(OBJ_SUFFIX): pinplay-debugger-shell.cpp
+	$(CXX) ${MYDEFINES} ${COPT} $(TOOL_CXXFLAGS) $(CXXFLAGS) $(TOOL_INCLUDES) $(PIN_CXXFLAGS) ${COMP_OBJ}$@ $<
+
+pinplay-driver.so:  pinplay-driver${OBJ_SUFFIX} pinplay-debugger-shell$(OBJ_SUFFIX)
+	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS) $(MYLIBS) $(EXTRA_LIBS) $(PIN_LIBS) $(DBG)
 

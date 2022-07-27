@@ -1,0 +1,12 @@
+o set SDE_BUILD_KIT to point to the latest SDE 9.* kit.
+o set variable PINBALL2ELF to point to the local copy of https://github.com/intel/pinball2elf.
+o Type 'make'
+o $SDE_BUILD_KIT/sde64 -t64 obj-intel64/global_event_icounter.so -thread_count 1 -prefix ls -- /bin/ls
+ global icount 0 Sim-Start
+ global icount 0 Late-Sim-Start
+o more ls.event_icount.0.txt 
+Sim-Start global_icount: 0
+Sim-Start tid: 0 icount 0
+Fini  global_icount: 447359
+Fini  tid: 0 icount 447359
+
