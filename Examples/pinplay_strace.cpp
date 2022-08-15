@@ -43,8 +43,8 @@ ICOUNT icount;
 FILE * trace;
 
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,         "pintool",
-    "o", "strace.out", "trace file");
-KNOB<BOOL> KnobPid(KNOB_MODE_WRITEONCE, "pintool", "pid", "0" , "Attach pid to filenames.");
+    "sout", "strace.out", "trace file");
+KNOB<BOOL> KnobPid(KNOB_MODE_WRITEONCE, "pintool", "spid", "0" , "Attach pid to filenames.");
 
 // Print syscall number and arguments
 VOID SysBefore(VOID * ip, INT32 num, VOID * arg0, VOID * arg1, VOID * arg2, VOID * arg3, VOID * arg4, VOID * arg5)
