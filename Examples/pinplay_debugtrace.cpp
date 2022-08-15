@@ -25,6 +25,7 @@ END_LEGAL */
 
 #include "pin.H"
 #include "instlib.H"
+#include "regvalue_utils.h"
 //#include "portability.H"
 #include "pinplay.H"
 #  include "sde-init.H"
@@ -45,14 +46,17 @@ using namespace CONTROLLER;
 KNOB<BOOL> KnobDoExecuteAt(KNOB_MODE_WRITEONCE, "pintool", "do_executeat", "0" , "Use executeat at the start of the region.");
 
 using namespace INSTLIB;
-static CONTROL_MANAGER control;
+CONTROL_MANAGER local_control("local_");
+CONTROL_MANAGER *controller;
+static PINPLAY_ENGINE *pinplay_engine;
+
 
 /* ===================================================================== */
 /* Commandline Switches */
 /* ===================================================================== */
 
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,         "pintool",
-    "out", "debugtrace.out", "trace file");
+    "dout", "debugtrace.out", "trace file");
 KNOB<BOOL>   KnobPid(KNOB_MODE_WRITEONCE,                "pintool",
     "in", "0", "append pid to output");
 KNOB<THREADID>   KnobWatchThread(KNOB_MODE_WRITEONCE,                "pintool",
@@ -228,7 +232,7 @@ AFUNPTR emitFuns[] =
 /* ===================================================================== */
 #if !defined(TARGET_IPF)
 
-VOID EmitXMM(THREADID threadid, UINT32 regno, PIN_REGISTER* xmm)
+VOID EmitXMM(THREADID threadid, UINT32 regno, PINTOOL_REGISTER* xmm)
 {
     if (!Emit(threadid))
         return;
@@ -726,8 +730,20 @@ int main(int argc, CHAR *argv[])
     out << hex << right;
     out.setf(ios::showbase);
 
-    control.RegisterHandler(Handler, 0, FALSE); 
-    control.Activate();
+    pinplay_engine = sde_tracing_get_pinplay_engine();
+    controller = SDE_CONTROLLER::sde_controller_get();
+
+    if(pinplay_engine->IsLoggerActive())
+    {
+        controller->RegisterHandler(Handler,0, TRUE);
+    }
+    else
+    {
+        local_control.RegisterHandler(Handler,0, TRUE);
+        local_control.Activate();
+        controller = &local_control;
+    }
+
     TRACE_AddInstrumentFunction(Trace, 0);
 
     PIN_AddFiniFunction(Fini, 0);

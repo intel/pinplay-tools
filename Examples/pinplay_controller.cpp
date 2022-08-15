@@ -33,9 +33,9 @@ using namespace CONTROLLER;
 
 static KNOB<INT32> PauseReplayKnob(KNOB_MODE_WRITEONCE, "pintool", "pause_replay",  "0", "Pause after reaching the region-of-interst so that  debugger can start listening.");
 KNOB<string> KnobOutputFile(KNOB_MODE_WRITEONCE,         "pintool",
-    "o", "controller.out", "trace file");
+    "lout", "controller.out", "trace file");
 KNOB<BOOL>   KnobPid(KNOB_MODE_WRITEONCE,                "pintool",
-    "i", "0", "append pid to output");
+    "in", "0", "append pid to output");
 KNOB<BOOL>   KnobEarlyOut(KNOB_MODE_WRITEONCE,                "pintool",
     "my_early_out", "0", "Exit after reporting a STOP event");
 
@@ -45,7 +45,7 @@ using namespace INSTLIB;
 ICOUNT icount;
 
 // Contains knobs and instrumentation to recognize start/stop points
-CONTROL_MANAGER local_control;
+CONTROL_MANAGER local_control("local_");
 CONTROL_MANAGER *controller;
 
 BOOL stop_seen = FALSE;
