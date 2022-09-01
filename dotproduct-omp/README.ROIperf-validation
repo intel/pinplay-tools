@@ -1,0 +1,31 @@
+Pre-requisites:
+--------------
+ 1. Latest Pin-kit: pintool.intel.com
+   % setenv PIN_ROOT <path to the Pin kit>
+ 2. pinball2elf code from https://github.com/intel/pinball2elf.git
+   % setenv PINBALL2ELF <path to the cloned pinball2elf repo >
+   % cd $PINBALL2ELF/pintools/ROIProbe
+   %make 
+
+Steps:
+-----
+ 1. Run LoopPoints tools : See ./README
+    o setenv SDE_BUILD_KIT <sde-external-9.0.0-2021-11-07-lin>
+    o < build GlobalLoopPoint tools [ see ./README] >
+    o Run sde-run.looppoint.global_looppoint.concat.filter.flowcontrol.sh
+ 2. Run ROI-perf
+  Make sure PIN_ROOT and PINBALL2ELF are set as listed in "Pre-requisites" above 
+  2.1 Whole-program ROIPerf runs
+    % ./run.wpROIperf.sh
+
+  2.2 Region ROIPerf runs
+    o ./create.sde_pinball_region_event_icount.sh 
+    o ./runall.region-event-icounter.sh [ SDE_BUILD_KIT populated with looppoint tools is required]
+    o ./runall.rgnbinperf.sh
+
+ 3. Extrapolate performance and get prediction error
+   ./extrapolate.py -w whole_program.1/ -r dotproduct.1_XXXXX.pp/ -d dotproduct.1_XXXXX.Data/  
+  where 'XXXXXXX' is the process-id embedded in your *.pp and *.Data directories
+  This will report:
+  wp_rdtsc,region_rdtsc,err%
+  1538183061.0,1612623245.5746667,-4.84%

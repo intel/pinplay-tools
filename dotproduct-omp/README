@@ -2,6 +2,10 @@ See LICENSE.dotproduct-omp and  LICENSE.scripts
 =============================================
 setenv SDE_BUILD_KIT <path to SDE 9.*>
 
+Copy ../pinplay-scripts to $SDE_BUILD_KIT/
+Add 'simpoint' binary to $SDE_BUILD_KIT/pinplay-scripts/PinPointsHome
+ [ see ../pinplay-scripts/README.simpoint ]
+
 #make sure all the looppoint tools are built:
 cd  ../GlobalLoopPoint/
 ./sde-build-GlobalLoopPoint.sh

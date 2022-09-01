@@ -52,9 +52,9 @@ fi
           then
             WATCHLIST="-watch_addr $wPC -watch_addr $sPC"
           fi
-          echo "\$PIN_ROOT/pin -t \$PIN_ROOT/extras/dcfg/bin/intel64/global_event_icounter.so -thread_count $tcount  -prefix $ppdir/$rpbname$SUFFIX $FILTERFLAGS   -pinplay:control start:address:$wPC:count$wcnt:global,stop:address:$sPC:count$scnt:global $WATCHLIST -replay -xyzzy -replay:deadlock_timeout 0 -replay:addr_trans -replay:basename $ppdir/$rpbname -- \$PIN_ROOT/extras/pinplay/bin/intel64/nullapp" >> run.pccount_event_icount.$INPUT.sh 
+          echo "\$PIN_ROOT/pin -t \$PIN_ROOT/extras/dcfg/bin/intel64/global_event_icounter.so -thread_count $tcount  -prefix $ppdir/$rpbname$SUFFIX $FILTERFLAGS   -pinplay:control start:address:$wPC:count$wcnt:global,stop:address:$sPC:count$scnt:global $WATCHLIST -exit_on_stop -replay -xyzzy -replay:deadlock_timeout 0 -replay:addr_trans -replay:basename $ppdir/$rpbname -- \$PIN_ROOT/extras/pinplay/bin/intel64/nullapp" >> run.pccount_event_icount.$INPUT.sh 
         else
-          echo "\$PIN_ROOT/pin -t \$PIN_ROOT/extras/dcfg/bin/intel64/global_event_icounter.so -thread_count $tcount  -prefix $ppdir/$rpbname$SUFFIX $FILTERFLAGS   -pinplay:control start:icount:1:global,stop:address:$sPC:count$scnt:global -watch_addr $sPC  -replay -xyzzy -replay:deadlock_timeout 0 -replay:addr_trans -replay:basename $ppdir/$rpbname -- \$PIN_ROOT/extras/pinplay/bin/intel64/nullapp" >> run.pccount_event_icount.$INPUT.sh 
+          echo "\$PIN_ROOT/pin -t \$PIN_ROOT/extras/dcfg/bin/intel64/global_event_icounter.so -thread_count $tcount  -prefix $ppdir/$rpbname$SUFFIX $FILTERFLAGS   -pinplay:control start:icount:1:global,stop:address:$sPC:count$scnt:global -watch_addr $sPC  -exit_on_stop -replay -xyzzy -replay:deadlock_timeout 0 -replay:addr_trans -replay:basename $ppdir/$rpbname -- \$PIN_ROOT/extras/pinplay/bin/intel64/nullapp" >> run.pccount_event_icount.$INPUT.sh 
         fi
       done
     chmod +x run.pccount_event_icount.$INPUT.sh

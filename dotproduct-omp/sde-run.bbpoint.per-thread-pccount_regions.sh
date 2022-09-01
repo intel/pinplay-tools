@@ -29,13 +29,20 @@ PAR=3 # how many regions to process in parallel. Should have PAR*OMP_NUM_THREADS
 if [ -z $SDE_BUILD_KIT ];
 then
   echo "Set SDE_BUILD_KIT to point to the latest (internal)SDE kit"
-  exit
+  exit 1
 fi
 
 if [ ! -e $SDE_BUILD_KIT/pinplay-scripts ];
 then
   echo "$SDE_BUILD_KIT/pinplay-scripts does not exist"
   cp -r ../pinplay-scripts $SDE_BUILD_KIT
+fi
+
+if [ ! -e $SDE_BUILD_KIT/pinplay-scripts/PinPointsHome/Linux/bin/simpoint ];
+then
+  echo "$SDE_BUILD_KIT/pinplay-scripts//PinPointsHome/Linux/bin/simpoint does not exist"
+  echo "See $SDE_BUILD_KIT/pinplay-scripts/README.simpoint"
+  exit 1
 fi
 
 if [ ! -e $SDE_BUILD_KIT/intel64/pcregions_control.so ];

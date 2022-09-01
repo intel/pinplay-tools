@@ -32,6 +32,13 @@ then
   cp -r ../pinplay-scripts $SDE_BUILD_KIT
 fi
 
+if [ ! -e $SDE_BUILD_KIT/pinplay-scripts/PinPointsHome/Linux/bin/simpoint ];
+then
+  echo "$SDE_BUILD_KIT/pinplay-scripts//PinPointsHome/Linux/bin/simpoint does not exist"
+  echo "See $SDE_BUILD_KIT/pinplay-scripts/README.simpoint"
+  exit 1
+fi
+
 sch="active"
 if [ $# -eq 1 ];
 then
