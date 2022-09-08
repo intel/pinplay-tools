@@ -25,6 +25,9 @@ PINPLAY_TOOLS := global_barrierpoint
 
 TOOL_ROOTS := $(SDE_TOOLS) $(PINPLAY_TOOLS)
 
+build: 
+	cp obj-$(TARGET)/global_barrierpoint.so $(SDE_BUILD_KIT)/$(TARGET)/sde-global-barrierpoint.so
+
 ##############################################################
 #
 # Build rules

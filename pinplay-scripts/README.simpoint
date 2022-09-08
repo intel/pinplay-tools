@@ -1,35 +1,4 @@
-Download SimPoint 3.2 sources from:
-https://cseweb.ucsd.edu/~calder/simpoint/simpoint-3-0.htm
-Build and use SimPoint.3.2/bin/simpoint.
+Automatic download and installation of SimPoint 3.2 needed.
 
-cp <path >/SimPoint.3.2/bin/simpoint PinPointsHome/Linux/bin/
-=====
-The following changes may be needed to make the SimPoint.3.2 sources compile:
-
-% diff orig/CmdLineParser.cpp analysiscode/CmdLineParser.cpp 
-73a74
-> #include <string.h> // for strlen()
-
-% diff orig/Datapoint.h analysiscode/Datapoint.h 
-85a86
-> #include <iostream> // Added 
-
-% diff orig/FVParser.cpp analysiscode/FVParser.cpp 
-81c81
-< #include <string>
----
-> #include <string.h> // changed 
-
-% diff orig/Utilities.h analysiscode/Utilities.h
-88a89,90
-> #include <cstdlib> // for strlen()
-> #include <climits> // for INT_MAX
----
-Multiple changes to Utilities::check() calls in analysiscode/Simpoint.cpp:
-  Change first argument: input --> input.is_open()
-% diff orig/Simpoint.cpp analysiscode/Simpoint.cpp
-178c178
-<                 Utilities::check(input, "Simpoint::loadData(): could not open file " +
----
->                 Utilities::check(input.is_open(), "Simpoint::loadData(): could not open file " +
-
+cd  PinPointsHome/Linux/bin/
+make
