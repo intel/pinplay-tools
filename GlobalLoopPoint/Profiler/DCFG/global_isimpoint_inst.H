@@ -18,6 +18,7 @@ END_LEGAL */
 #ifndef GLOBAL_ISIMPOINT_INST_H
 #define GLOBAL_ISIMPOINT_INST_H
 
+using namespace std;
 #include "isimpoint_inst.H"
 #include "atomic.hpp"
 #include "filter.mod.H"
