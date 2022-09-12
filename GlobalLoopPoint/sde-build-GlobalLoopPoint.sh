@@ -7,6 +7,12 @@ if [[  -z $SDE_BUILD_KIT ]]; then
     exit 1
 fi
 
+if [[  ! -e $SDE_BUILD_KIT//pinkit/source/tools/InstLib ]]; then
+    echo "$SDE_BUILD_KIT//pinkit/source/tools/InstLib does not exist"
+    echo " ... trying to workaround.."
+    cp -r  ReducedInstLib $SDE_BUILD_KIT//pinkit/source/tools/InstLib
+fi
+
 if [[  -z $PINBALL2ELF ]]; then
     echo "PINBALL2ELF not defined"
     echo "Point to a clone of https://github.com/intel/pinball2elf"
