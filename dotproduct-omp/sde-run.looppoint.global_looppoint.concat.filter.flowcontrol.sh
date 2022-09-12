@@ -35,8 +35,16 @@ fi
 if [ ! -e $SDE_BUILD_KIT/pinplay-scripts/PinPointsHome/Linux/bin/simpoint ];
 then
   echo "$SDE_BUILD_KIT/pinplay-scripts//PinPointsHome/Linux/bin/simpoint does not exist"
-  echo "See $SDE_BUILD_KIT/pinplay-scripts/README.simpoint"
-  exit 1
+  echo " Attempting to build it ..."
+  pushd $SDE_BUILD_KIT/pinplay-scripts//PinPointsHome/Linux/bin/
+  make clean; make
+  popd
+  if [ ! -e $SDE_BUILD_KIT/pinplay-scripts/PinPointsHome/Linux/bin/simpoint ];
+  then
+    echo "$SDE_BUILD_KIT/pinplay-scripts//PinPointsHome/Linux/bin/simpoint does not exist"
+    echo "See $SDE_BUILD_KIT/pinplay-scripts/README.simpoint"
+    exit 1
+  fi
 fi
 
 if [ ! -e $SDE_BUILD_KIT/intel64/sde-global-looppoint.so ];
