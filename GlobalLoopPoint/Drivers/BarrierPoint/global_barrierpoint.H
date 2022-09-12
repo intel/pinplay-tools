@@ -40,7 +40,7 @@ END_LEGAL */
 
 
 using namespace std;
-using namespace tr1;
+//using namespace tr1;
 
 namespace barrierpoint {
 class BARRIERPOINT {

@@ -34,8 +34,6 @@ END_LEGAL */
 #  include <sys/cdefs.h>
 #  if defined (PIN_CRT)
 #    include <unordered_map>
-#  else
-#    include <tr1/unordered_map>
 #  endif 
 #else
 #  include <unordered_map>
@@ -44,7 +42,6 @@ END_LEGAL */
 // We use unordered_map because it is more efficient than map for lookups.
 
 using namespace std;
-using namespace tr1;
 using namespace dcfg_api;
 using namespace dcfg_pin_api;
 using namespace INSTLIB;
