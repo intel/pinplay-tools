@@ -57,7 +57,7 @@ class SDEPinPoints(pinpoints.PinPoints):
     logger_cmd = 'sde_logger.py'
     replay_cmd = 'sde_replay_dir.py'
     replayer_cmd = 'sde_replayer.py'
-    sim_replay_cmd = 'sde_cmpsim_replay_dir.py'
+    #sim_replay_cmd = 'sde_cmpsim_replay_dir.py'
     sim_run_cmd = 'sim_run_dir.py'
 
     def PrintHome(self, options):
@@ -91,6 +91,7 @@ class SDEPinPoints(pinpoints.PinPoints):
         @return SDE kit
         """
 
+        #import pdb ; pdb.set_trace()
         kit_obj = sde_kit.SDEKit()
         self.pin = kit_obj.pin
         self.path = kit_obj.path
@@ -106,6 +107,7 @@ class SDEPinPoints(pinpoints.PinPoints):
         @return Simulator kit
         """
 
+        #import pdb ; pdb.set_trace()
         self.pin = kit_obj.pin
         self.path = kit_obj.path
         self.kit_type = kit_obj.kit_type
@@ -202,7 +204,7 @@ class SDEPinPoints(pinpoints.PinPoints):
 
         # Need the appropriate simulator kit too.
         #
-        sim_kit = self.GetKit()
+        #sim_kit = self.GetSimKit()
 
         # Generate LMAT/LIT files.
         #
@@ -242,6 +244,7 @@ class SDEPinPoints(pinpoints.PinPoints):
         if options.region_sim or options.default_phases:
             # Print out CMPSim results every warmup_length instructions.
             #
+            msg.PrintAndExit('Region Simulation not supported ')
             phase_length = options.warmup_length // config.instr_cmpsim_phase
             if phase_length == 0:
                 phase_length = 1
@@ -261,6 +264,7 @@ class SDEPinPoints(pinpoints.PinPoints):
         # Run CMPSim simulator on whole program pinballs.
         #
         if options.whole_sim or options.default_phases:
+            msg.PrintAndExit('Simulation (whole-program) not supported ')
             # Set phase_length to print out CMPSim results every slice_size instructions.
             #
             phase_length = options.slice_size // config.instr_cmpsim_phase
@@ -281,6 +285,7 @@ class SDEPinPoints(pinpoints.PinPoints):
         # Calculate prediction error from simulator data files.
         #
         if options.pred_error or options.default_phases:
+            msg.PrintAndExit('Simulation/predction error compute not supported ')
             if not options.list:
                 msg.PrintMsgDate('Calculating prediction error %s' % \
                     config.PhaseStr(config.pred_error))
