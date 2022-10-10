@@ -19,6 +19,8 @@ Steps:
     % ./run.wpROIperf.sh
 
   2.2 Region ROIPerf runs
+    o Split the pinpoints *.csv file into per region *.CSV file
+      $SDE_BUILD_KIT/pinplay-scripts/split.pc-csvfile.py --csv_file dotproduct.1_8328.Data/dotproduct.1_8328.global.pinpoints.csv
     o ./create.sde_pinball_region_event_icount.sh 
     o ./runall.region-event-icounter.sh [ SDE_BUILD_KIT populated with looppoint tools is required]
     o ./runall.rgnbinperf.sh

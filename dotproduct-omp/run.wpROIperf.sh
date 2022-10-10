@@ -54,8 +54,8 @@ COMMAND="$PIN_ROOT/pin -t $ROIPERF -probecontrol:in probe.in -probecontrol:verbo
   echo "time $COMMAND" >> run.wpbinperf.sh
   chmod +x run.wpbinperf.sh
   rm probe.in
-  echo "start:main:1" > probe.in
-  echo "stop:exit:1" >> probe.in
+  echo "RTNstart:main:1" > probe.in
+  echo "RTNstop:exit:1" >> probe.in
   echo "~/bin/clean_slate"
   ~/bin/clean_slate
   export ROIPERF_PERFLIST="0:0,0:1"
