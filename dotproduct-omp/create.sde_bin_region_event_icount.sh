@@ -70,6 +70,10 @@ source ./$sch.env.sh
         ridlong=`echo $rec | awk -F"," '{printf "%03d",$3}'`
         region=$tid"r"$rid
         rpbname=$prefix"_"$region
+        startImage=`echo $rec | awk -F"," '{printf $5}'`
+        endImage=`echo $rec | awk -F"," '{printf $9}'`
+        startOffset=`echo $rec | awk -F"," '{printf $6}'`
+        endOffset=`echo $rec | awk -F"," '{printf $10}'`
         startPC=`echo $rec | awk -F"," '{printf $4}'`
         endPC=`echo $rec | awk -F"," '{printf $8}'`
         startCount=`echo $rec | awk -F"," '{print $7}'`
@@ -81,6 +85,8 @@ COMMAND="\$SDE_ROOT/sde64 -t64 \$SDE_ROOT/intel64/sde-global-event-icounter.so -
         echo "export SDE_ROOT=$SDE_ROOT" >> run.sde-eventcount.$pgm.$i.$rid.sh
         echo "ulimit -s unlimited" >> run.sde-eventcount.$pgm.$i.$rid.sh
         cat $sch.env.sh   >> run.sde-eventcount.$pgm.$i.$rid.sh
+        echo "#time $COMMAND" >> run.sde-eventcount.$pgm.$i.$rid.sh
+COMMAND="\$SDE_ROOT/sde64 -t64 \$SDE_ROOT/intel64/sde-global-event-icounter.so -thread_count $OMP_NUM_THREADS -prefix $ppdir/$rpbname -controller_log -controller_olog pcevents.controller.$pgm.$i.$rid.txt -xyzzy  -control start:address:$startImage+$startOffset:count$startCount:global -control stop:address:$endImage+$endOffset:count$endCount:global -exit_on_stop -- $cmd"
         echo "time $COMMAND" >> run.sde-eventcount.$pgm.$i.$rid.sh
         chmod +x run.sde-eventcount.$pgm.$i.$rid.sh
         echo " run.sde-eventcount.$pgm.$i.$rid.sh created"
