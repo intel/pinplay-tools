@@ -29,7 +29,6 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #END_LEGAL
-
 import sys
 import os
 import re
@@ -136,26 +135,15 @@ def init_pin_crt_compile(env):
     else:
         bionic_arch = 'x86'
         fenv_arch = 'i387'
-    if env.on_linux():
-        pin_sys_header_dirs = [ mbuild.join(env['pin'],'extras'),
-                                mbuild.join(env['pin'],'extras','cxx','include'),
-                                mbuild.join(env['pin'],'extras','crt','include'),
-                                mbuild.join(env['pin'],'extras','crt'),
-                                mbuild.join(env['pin'],'extras','crt','include','arch-'+bionic_arch),
-                                mbuild.join(env['pin'],'extras','crt','include','kernel','uapi'),
-                                mbuild.join(env['pin'],'extras','crt','include','kernel','uapi','asm-x86'),
-                                mbuild.join(env['pin'],'extras','crt','include',fenv_arch) ]
-    else:
-        pin_sys_header_dirs = [ mbuild.join(env['pin'],'extras','stlport','include'),
-                                mbuild.join(env['pin'],'extras'),
-                                mbuild.join(env['pin'],'extras','libstdc++','include'),
-                                mbuild.join(env['pin'],'extras','crt','include'),
-                                mbuild.join(env['pin'],'extras','crt'),
-                                mbuild.join(env['pin'],'extras','crt','include','arch-'+bionic_arch),
-                                mbuild.join(env['pin'],'extras','crt','include','kernel','uapi'),
-                                mbuild.join(env['pin'],'extras','crt','include','kernel','uapi','asm-x86'),
-                                mbuild.join(env['pin'],'extras','crt','include',fenv_arch) ]    
-
+    pin_sys_header_dirs = [ mbuild.join(env['pin'],'extras','stlport','include'),
+                            mbuild.join(env['pin'],'extras'),
+                            mbuild.join(env['pin'],'extras','libstdc++','include'),
+                            mbuild.join(env['pin'],'extras','crt','include'),
+                            mbuild.join(env['pin'],'extras','crt'),
+                            mbuild.join(env['pin'],'extras','crt','include','arch-'+bionic_arch),
+                            mbuild.join(env['pin'],'extras','crt','include','kernel','uapi'),
+                            mbuild.join(env['pin'],'extras','crt','include','kernel','uapi','asm-x86'),
+                            mbuild.join(env['pin'],'extras','crt','include',fenv_arch) ]
     for sys_hdir in pin_sys_header_dirs:
         sys_hdir = env.expand_string(sys_hdir)
         add_system_include_dir(env,sys_hdir)
@@ -357,87 +345,32 @@ def setup_local_gcc(env):
            elif alg == 'no-suffix':
                suffix = ''
            if setup_local_gcc_internal(env, gver, suffix):
-               mbuild.msgb('SETUP LOCAL GCC', env['gcc_version'])
                return True
    return False
 
-def find_gcc_usr(env):
-    try:
-        # try setting GCC from local settings
-        import local_settings
-        return local_settings.find_gcc_usr_intel(env)
-    except ImportError as err:
-        mbuild.msgb("No local settings")
-        return None
+def find_gcc_usr_intel(env):
+   for gv in ['10.1.0', '8.2.0']:
+       env['gcc_version'] = gv
+       p = env.expand('/usr/intel/pkgs/gcc/%(gcc_version)s/bin')
+       if os.path.exists(p):
+           break
    
-def setup_gcc_usr(env):
-   gccpath = find_gcc_usr(env)
-   if not gccpath:
-      return
-
-   gcc = mbuild.join(gccpath, 'gcc')
-   if not gcc_supported(gcc):
-       return
-
-   env['gcc_version']    =  mbuild.compute_gcc_version(gcc)
-   env['toolchain']      =  gccpath + "/"
-   env['AR']             =  env['toolchain'] + 'ar'
-   env['CC_COMPILER']    =  'gcc'
-   env['CXX_COMPILER']   =  'g++'
-   env['ASSEMBLER']      =  'gcc'
-   mbuild.msgb('SETUP GCC FROM USR', env['gcc_version'])
-   return True
-
-def find_gcc_nfs(env):
-    try:
-        # try setting GCC from local settings
-        import local_settings
-        return local_settings.find_gcc_nfs(env)
-    except ImportError as err:
-        mbuild.msgb("No NFS settings")
-        return None
-   
-def setup_gcc_nfs(env):
-   gccpath = find_gcc_nfs(env)
-   if not gccpath:
-      return
-
-   gcc = mbuild.join(gccpath, 'gcc')
-   if not gcc_supported(gcc):
-       return
-
-   env['gcc_version']    =  mbuild.compute_gcc_version(gcc)
-   env['toolchain']      =  gccpath + "/"
-   env['AR']             =  env['toolchain'] + 'ar'
-   env['CC_COMPILER']    =  'gcc'
-   env['CXX_COMPILER']   =  'g++'
-   env['ASSEMBLER']      =  'gcc'
-   mbuild.msgb('SETUP GCC FROM NFS', env['gcc_version'])
-   return True
-
 def init_gnu_env_compile(env):
 
-    gccpath = ''
     if env['toolchain'] == '':
         # find a reasonable toolchain if none is set
         if not env['gcc_version']:
-            # First try taking gcc from NFS
-            setup_gcc_nfs(env)
-
-            # now try from usr local
-            if not env['toolchain']:
-                setup_local_gcc(env)
-
-            if not env['toolchain']:
+            # First try local gcc
+            if not setup_local_gcc(env):
                 # Then try intel packages
-                setup_gcc_usr(env)
-
-            if not env['toolchain']:
-                # search the path
-                gccname = env.expand('%(CC_COMPILER)s')
-                env['toolchain'] =  find_path(gccname) + '/'
-                env['gcc_version'] = mbuild.compute_gcc_version( env['toolchain'] + gccname)
-                mbuild.msgb('SETUP GCC PATH', env['gcc_version'])
+                find_gcc_usr_intel(env)
+                p = env.expand('/usr/intel/pkgs/gcc/%(gcc_version)s/bin')
+                if os.path.exists(p):
+                    env['toolchain'] = p + '/'
+                else: # search the path
+                    gccname = env.expand('%(CC_COMPILER)s')
+                    env['toolchain'] =  find_path(gccname) + '/'
+                    env['gcc_version'] = mbuild.compute_gcc_version( env['toolchain'] + gccname)
 
     mbuild.msgb("TOOLCHAIN", env['toolchain'])
     if env['toolchain'] == '':
@@ -447,7 +380,8 @@ def init_gnu_env_compile(env):
 
     flags = ''
     if not env['gcc_version']:
-        env['gcc_version'] = mbuild.compute_gcc_version( env['toolchain'] + env['CC_COMPILER'])
+        env['gcc_version'] = mbuild.compute_gcc_version( env['toolchain'] +
+                                                         env['CC_COMPILER'])
 
     flags += ' -fomit-frame-pointer'
     flags += ' -Wall'
@@ -468,7 +402,7 @@ def init_gnu_env_compile(env):
     major_gcc_ver = int(env['gcc_version'].split('.')[0])
     cxxflags = ''
     if env.on_linux() and major_gcc_ver >= 7:
-        cxxflags += ' -faligned-new '
+        cxxflags +=  ' -faligned-new '
 
     if env.on_linux():
         flags += ' -fstack-clash-protection '
@@ -534,10 +468,7 @@ def init_gnu_env_link_tool(env):
         libs += ' -lpin'
 
     # PIN CRT linker flags
-    if env.on_linux():
-        libs += ' -nostdlib -lc-dynamic -lm-dynamic -lc++ -lc++abi '
-    else:
-        libs += ' -nostdlib -lc-dynamic -lm-dynamic -lstlport-dynamic '
+    libs += ' -nostdlib -lc-dynamic -lm-dynamic -lstlport-dynamic '
     libs += ' -lunwind-dynamic '
         
     if env['xedshared']:
@@ -557,15 +488,7 @@ def init_gnu_env_link_tool(env):
         lflags += ' %(sotool_lflags)s '
 
     if env.on_linux():
-        # check if we need to use pin3dwarf or pindwarf
-        olddwarf = env.expand('%(pin)s/intel64/lib-ext/libpin3dwarf.so')
-        newdwarf = env.expand('%(pin)s/intel64/lib/libpindwarf.so')
-        if os.path.exists(olddwarf):
-            libs += ' -lpin3dwarf'
-        elif os.path.exists(newdwarf):
-            libs += ' -lpindwarf'
-        else:
-            mbuild.die('Could not find pin dwarf library')
+        libs   += ' -lpin3dwarf'
 
         # make the pin tools shared objects on linux
         sotool_lflags = ''
