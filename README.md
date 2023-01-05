@@ -3,12 +3,12 @@ Pin Record/Replay Tools
 A collection of C/C++ programs and Python scripts to be used in conjunction with Intel Software Development Emulator (Intel SDE, available externally separately). The purpose is to use record/replay functionality in SDE for program analysis.
 
 
- ├── dotproduct-omp
+ ├── openmp
  ├── Examples
  ├── GlobalLoopPoint
  └── pinplay-scripts
 
-dotproduct-omp: Test OpenMP program sources, makefile, shell-scripts to run looppoint toolchain.
+openmp: Test OpenMP program sources, makefile, shell-scripts to run looppoint toolchain.
 
 Examples:Test program sources and  makefile for building simple SDE+PinPlay tools
 
