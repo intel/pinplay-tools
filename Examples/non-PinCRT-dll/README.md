@@ -107,7 +107,7 @@ Pin tools switches
 266       fprintf(stderr, "Skipping MyFunction() call\n");
 267   }
 ```
-## Example pintool calliing dll_loader.CallMyFunction()
+## Example pintool calling dll_loader.CallMyFunction()
 
 - See use-myfunction.cpp:  it calls dll_loader.CallMyFunction() at two places
     - Before the first instruction in the main image
