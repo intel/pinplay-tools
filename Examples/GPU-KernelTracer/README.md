@@ -1,14 +1,14 @@
-#Overview
+# Overview
 This is a combined GPU+CPU analysis tool.
 
 CPU-Pin is used to drive everything, it loads a specified GT-Pin tool shared library and initializes it.  Hence both CPU and GPU instrumentation/analyses are active at the same time in the same process.
 
 The example GT-Pin tool (GTPinTool/GTPinShim.cpp) allows the CPU-Pin tool to register callbacks on GPU kernel events 'on_kernel_build', 'on_kernel_run', and 'on_kernel_complete', 'on_GPU_fini'.
 
-#Build/Use
+# Build/Use
 The setup works with x86 CPUs (uses Pin) and Intel GPUs (using GT-Pin) only.
 
-##Pre-requisites:
+## Pre-requisites:
 1.  Pin or SDE kit 
    - For Pin build: 
     - Set ***PIN_ROOT*** to point to the latest [Pin kit](https://pintool.intel.com)
@@ -19,7 +19,7 @@ The setup works with x86 CPUs (uses Pin) and Intel GPUs (using GT-Pin) only.
 
 2. Set ***GTPIN_KIT*** to point to the 'Profilers' directory from the latest [GT-Pin kit](https://www.intel.com/content/www/us/en/developer/articles/tool/gtpin.html ).
 
-##How to build:
+## How to build:
 ```
 cd CPUPinTool
 ./pin.build.sh # Pin-based build : both Probe and JIT mode supported
@@ -29,25 +29,25 @@ cd CPUPinTool
 ./sde.build.sh # SDE-based build : only JIT mode supported 
 ```
 
-##How to run:
+## How to run:
 set ***PINPLAYTOOLS*** __<path to pinplay-tools >__
 ```
 export ZET_ENABLE_API_TRACING_EXP=1 # GT-Pin with level-0 requires this
 export ZET_ENABLE_PROGRAM_INSTRUMENTATION=1 # GT-Pin with level-0 requires this
 export ZE_ENABLE_TRACING_LAYER=1 # GT-Pin with level-0 requires this
 ```
-###WARNING: do not use SDE-built tool with Pin or vice versa
+### WARNING: do not use SDE-built tool with Pin or vice versa
 
-###Pin-based run
+### Pin-based run
 ```
 $PIN_ROOT/pin -t $PINPLAYTOOLS/Examples/GPU-KernelTracer/CPUPinTool/obj-intel64/xpu-pin-kerneltracer.so -gtpindir $GTPIN_KIT -gtpintool $PINPLAYTOOLS/Examples/GPU-KernelTracer/GTPinTool/build/GTPinShim.so -- matrix_mul_omp
 ```
-###SDE-based run
+### SDE-based run
 ```
 $SDE_BUILD_KIT/sde64 -t64 $PINPLAYTOOLS/Examples/GPU-KernelTracer/CPUPinTool/obj-intel64/xpu-pin-kerneltracer.so -gtpindir $GTPIN_KIT -gtpintool $PINPLAYTOOLS/Examples/GPU-KernelTracer/GTPinTool/build/GTPinShim.so -- matrix_mul_omp
 ```
 
-###Sample output
+### Sample output
 ```
 Result of matrix multiplication using OpenMP: Success - The results are correct!
         ->CPU_on_kernel_build() : kerenel: __omp_offloading_10302_54c0134__Z28MatrixMulOpenMpGpuOffloadingv_l107
@@ -57,7 +57,7 @@ Result of matrix multiplication using GPU offloading: Success - The results are 
         ->CPU_on_gpu_fini()
 ```
 
-#Details:
+# Details:
 ```
 GPU-KernelTracer/
 ├── CPUPinTool  <--- a CPU-Pin driver tool that explicitly loads a GT-Pin tool dll.
@@ -82,7 +82,7 @@ GPU-KernelTracer/
 └── README.md
 ```
 
-##xpu-pin-kerneltracer knobs/switches
+## xpu-pin-kerneltracer knobs/switches
 
 ```
 $PIN_ROOT/pin -t $PINPLAYTOOLS/Examples/GPU-KernelTracer/CPUPinTool/obj-intel64/xpu-pin-kerneltracer.so  -help -- /bin/ls
@@ -102,9 +102,9 @@ Pin tools switches
 ```
 
 
-##Registering GPU event callbacks:
+## Registering GPU event callbacks:
 
-###In the CPU Pin tool: 
+### In the CPU Pin tool: 
 ```
       GTPIN_LOADER gtpin_loader;
       gtpin_loader.Activate(CPU_on_kernel_build, CPU_on_kernel_run, CPU_on_kernel_complete, CPU_on_gpu_fini);
@@ -114,7 +114,7 @@ Pin tools switches
          If found, it registers callbacks on various GPU events.
 ```
 
-###In the GT-Pin tool: 
+### In the GT-Pin tool: 
 ```
   Provide: EXPORT_C_FUNC void GTPinShimRegisterCallbacks(void * ptrb, void * ptrr, void * ptrc, void * ptrf)
 In OnKernelBuild(IGtKernelInstrument& instrumentor):
