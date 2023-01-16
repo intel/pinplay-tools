@@ -1,7 +1,7 @@
-#non-PinCRT-dll : Overview
+# non-PinCRT-dll : Overview
 This tool demonstrates how a Pin tool can dlopen a third-party library (MyLib/mydll.so) built with the default Linux C run-time (***not PinCRT***).
 
-#Pre-requisites:
+# Pre-requisites:
 1.  Pin or SDE kit
    - For Pin build:
     - Set ***PIN_ROOT*** to point to the latest [Pin kit 3.xx](https://pintool.intel.com)
@@ -10,8 +10,8 @@ This tool demonstrates how a Pin tool can dlopen a third-party library (MyLib/my
     - Set ***SDE_BUILD_KIT*** to point to an [SDE kit (9.14 or later)](https://www.intel.com/content/www/us/en/developer/articles/tool/software-development-emulator.html)
     - Set ***MBUILD*** to [mbuild sources cloned](https://github.com/intelxed/mbuild.git)
 
-##How to build:
-###Build non-PinCRT shared library
+## How to build:
+### Build non-PinCRT shared library
 ```
 cd MyLib
 make
@@ -25,23 +25,23 @@ cd ..
 ./sde.build.sh # SDE-based build : only JIT mode supported
 ```
 
-##How to run:
-###WARNING: do not use SDE-built tool with Pin or vice versa
+## How to run:
+### WARNING: do not use SDE-built tool with Pin or vice versa
 
-###Pin-based run
+### Pin-based run
 ```
 $PIN_ROOT/pin -t obj-intel64/dlopen-driver.so -mydll MyLib/libmydll.so -- /bin/ls
 Myfunction called
          argument 'Hi from DLLLoader'
 ```
-###SDE-based run
+### SDE-based run
 ```
 $SDE_BUILD_KIT/sde64 -t64 obj-intel64/dleopen-driver.so -mydll MyLib/libmydll.so -- /bin/ls
 Myfunction called
         argument 'Hi from DLLLoader' 
 ```
 
-#Details:
+# Details:
 ```
 non-PinCRT-dll/
 ├── clean.sh
@@ -58,7 +58,7 @@ non-PinCRT-dll/
 ├── README.md
 └── sde.build.sh
 ```
-##dllopen-driver knobs/switches
+## dllopen-driver knobs/switches
 ```
 $PIN_ROOT/pin -t obj-intel64/dlopen-driver.so -h  -- /bin/ls
 
@@ -83,7 +83,7 @@ Pin tools switches
     - Uses the application dlsym() to find the function "MyFunction()" 
     - Makes a call 'MyFunction("Hi from DLLLoader")'
 
-##To use with other third-party library of interest:
+## To use with other third-party library of interest:
 1. edit dllinfo.h:
     - change typedef of myfunc_t
     - change 'MyFunction' to the name of your function of interest
@@ -107,12 +107,12 @@ Pin tools switches
 266       fprintf(stderr, "Skipping MyFunction() call\n");
 267   }
 ```
-##Example pintool calliing dll_loader.CallMyFunction()
+## Example pintool calliing dll_loader.CallMyFunction()
 
 - See use-myfunction.cpp:  it calls dll_loader.CallMyFunction() at two places
     - Before the first instruction in the main image
     - In Fini() at the end of the execution.
-###Pin-based build and run:
+### Pin-based build and run:
 ```
   make obj-intel64/use-myfunction.so
   $PIN_ROOT/pin -t obj-intel64/use-myfunction.so -mydll MyLib/libmydll.so -- /bin/true
