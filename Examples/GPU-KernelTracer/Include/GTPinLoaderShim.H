@@ -82,12 +82,13 @@ private:
     init = true;
   }
 
-  static VOID LibdlInitJITGTPinLoader(FP_INIT origInit)
+  static VOID LibdlInitJITGTPinLoader()
   {
     static bool init = false;
     if (init)          return;
     if(KnobVerbose) *out << "LibdlInitJITGTPinLoader called" << endl;
-    GTPinLoader("libdl.so");
+    *out << "Skiping GTPinLoader call" << endl;
+    //GTPinLoader("libdl.so");
     init = true;
     return;
   }
@@ -100,7 +101,7 @@ private:
     GTPinLoader("libdl.so");
   }
 
-  static VOID image(IMG img, VOID *arg)
+  static VOID imageProbe(IMG img, VOID *arg)
   {
     const char* dynloaderImageName = "libdl";
     const char* libcImageName      = "libc";
@@ -145,8 +146,7 @@ private:
         RTN initRtn = RTN_FindByName(img, "_init");
         if (RTN_Valid(initRtn))
         {
-          if (KnobProbe)
-          {
+            if(KnobVerbose) *out << "_init 0x" << std::hex << RTN_Address(initRtn) << " given name:" << RTN_Name(initRtn) << endl;
             if (RTN_IsSafeForProbedReplacement(initRtn))
             {
                 // Define a function prototype that describes the application routine that will be replaced.
@@ -162,29 +162,6 @@ private:
             {
                     *out << "Skip replacing _init in " << imgName << " since it is not safe." << endl;
             }
-          }
-          else
-          {
-            //JIT mode
-                if(KnobVerbose) *out << "_init 0x" << std::hex << RTN_Address(initRtn) << " given name:" << RTN_Name(initRtn) << endl;
-                RTN instrtn = initRtn; 
-                RTN_Open(instrtn);
-                RTN_InsertCall(instrtn, IPOINT_AFTER, AFUNPTR(LibdlInitJITGTPinLoader), IARG_END);
-                RTN_Close(instrtn);
-          }
-        }
-        else // "_init" routine not valid. Workaround for JIT mode
-        {
-          if (!KnobProbe)
-          {
-            //JIT mode
-                if(KnobVerbose) *out << "_init RTN not found: JIT mode workaround" << endl;
-                RTN instrtn = rtn; 
-                if(KnobVerbose) *out << "instrtn 0x" << std::hex << RTN_Address(instrtn) << " given name:" << RTN_Name(instrtn) << endl;
-                RTN_Open(instrtn);
-                RTN_InsertCall(instrtn, IPOINT_BEFORE, AFUNPTR(LibdlInitJITGTPinLoader), IARG_END);
-                RTN_Close(instrtn);
-          }
         }
       }
         return;
@@ -206,8 +183,6 @@ private:
             Error("Unable to find routine for first instruction (Image entry) executed in image");
     }
     
-          if (KnobProbe)
-          {
     if (RTN_IsSafeForProbedInsertion(firstInstructionRtn) == false)
     {
         //Error("can not inject gtpin to image " + imgName);
@@ -215,18 +190,8 @@ private:
         return;
     }
 
-    {
-        if(KnobVerbose) *out << "At image: " << IMG_Name(img) << " (" << entry <<")" << " Inserting probe to gtpin loader at (init) 0x" << std::hex << RTN_Address(firstInstructionRtn) << endl;
-    }
+    if(KnobVerbose) *out << "At image: " << IMG_Name(img) << " (" << entry <<")" << " Inserting probe to gtpin loader at (init) 0x" << std::hex << RTN_Address(firstInstructionRtn) << endl;
     RTN_InsertCallProbed(firstInstructionRtn, IPOINT_BEFORE, (AFUNPTR)GTPinLoader, IARG_PTR, strdup(imgName.c_str()), IARG_END);
-          }
-          else
-          {
-            //JIT mode
-                RTN_Open(firstInstructionRtn);
-                RTN_InsertCall(firstInstructionRtn, IPOINT_BEFORE, AFUNPTR(GTPinLoader), IARG_END);
-                RTN_Close(firstInstructionRtn);
-          }
 
     // Add probe at _start
     RTN startRtn = RTN_FindByName(img, "_start");
@@ -240,21 +205,8 @@ private:
     // Insert probe only if routines are different - prevent duplicate probe at same location
     if (RTN_Address(startRtn) != RTN_Address(firstInstructionRtn))
     {
-          if (KnobProbe)
-          {
-        //if (DLLINJECT_UTILS::IsVerbose())
-        {
-            if(KnobVerbose) *out << "Inserting probe to gtpin loader at (start) 0x" << std::hex << RTN_Address(startRtn) << endl;
-        }
-        RTN_InsertCallProbed(startRtn, IPOINT_BEFORE, (AFUNPTR)GTPinLoader, IARG_PTR, strdup(imgName.c_str()), IARG_END);
-          }
-          else
-          {
-            //JIT mode
-                RTN_Open(startRtn);
-                RTN_InsertCall(startRtn, IPOINT_BEFORE, AFUNPTR(GTPinLoader), IARG_END);
-                RTN_Close(startRtn);
-          }
+      if(KnobVerbose) *out << "Inserting probe to gtpin loader at (start) 0x" << std::hex << RTN_Address(startRtn) << endl;
+      RTN_InsertCallProbed(startRtn, IPOINT_BEFORE, (AFUNPTR)GTPinLoader, IARG_PTR, strdup(imgName.c_str()), IARG_END);
     }
     else 
     {
@@ -262,6 +214,94 @@ private:
     }
   }
 
+
+  static VOID imageJIT(IMG img, VOID *arg)
+  {
+    const char* dynloaderImageName = "libdl";
+    const char* libcImageName      = "libc";
+    const char* dlopenFuncName = "dlopen";
+    const char* dlsymFuncName = "dlsym";
+    const char* dlerrorFuncName = "dlerror";
+
+    string imgName = IMG_Name(img);
+        if(KnobVerbose) *out << "Loaded image: " << imgName << endl;
+
+    // The dynamic linking loader interface, which includes three functions: dlopen, dlsym and dlerror, 
+    // can be defined in either libdl or libc library. It is assumed that all three functions are defined
+    // in the same library.
+    if (!dlopen_addr)
+    {
+      if (imgName.find(dynloaderImageName) != string::npos ||
+            imgName.find(libcImageName) != string::npos)
+      {
+        RTN rtn = RTN_FindByName(img, dlopenFuncName);
+        if (RTN_Valid(rtn))
+        {
+          dlopen_addr = RTN_Funptr(rtn);
+
+          rtn = RTN_FindByName(img, dlsymFuncName);
+          if (!RTN_Valid(rtn))
+              Error("Unable to find dlsym function");
+          else
+            if(KnobVerbose) fprintf(stderr, "found %s \n", dlsymFuncName);
+
+          dlsym_addr = RTN_Funptr(rtn);
+
+          rtn = RTN_FindByName(img, dlerrorFuncName);
+          if (!RTN_Valid(rtn))
+            Error("Unable to find dlerror function");
+          else
+            if(KnobVerbose) fprintf(stderr, "found %s \n", dlerrorFuncName);
+
+          dlerror_addr = RTN_Funptr(rtn);
+        }
+      }
+    }
+
+    if (!IMG_IsMainExecutable(img))
+    {
+        return;
+    }
+
+    // Add probe at first instruction in the image
+    ADDRINT entry = IMG_EntryAddress(img);
+    
+    RTN firstInstructionRtn = RTN_FindByAddress(entry);
+    if (!RTN_Valid(firstInstructionRtn))
+    {
+        firstInstructionRtn = RTN_CreateAt(entry, string("main-entry"));
+        if (!RTN_Valid(firstInstructionRtn))
+            Error("Unable to find routine for first instruction (Image entry) executed in image");
+    }
+    
+    if(KnobVerbose) *out << "At image: " << IMG_Name(img) << " (" << entry <<")" << " Inserting call to gtpin loader before (init) 0x" << std::hex << RTN_Address(firstInstructionRtn) << endl;
+    RTN_Open(firstInstructionRtn);
+    RTN_InsertCall(firstInstructionRtn, IPOINT_BEFORE, AFUNPTR(GTPinLoader), IARG_END);
+    RTN_Close(firstInstructionRtn);
+
+    // Add probe at _start
+    RTN startRtn = RTN_FindByName(img, "_start");
+    if (!RTN_Valid(startRtn))
+    {
+        startRtn = RTN_CreateAt(entry, string("main-entry"));
+        if (!RTN_Valid(startRtn))
+            Error("Unable to find routine for _start in the image");
+    }
+
+    // Insert probe only if routines are different - prevent duplicate probe at same location
+    if (RTN_Address(startRtn) != RTN_Address(firstInstructionRtn))
+    {
+      if(KnobVerbose) *out << "Inserting call to gtpin loader at (start) 0x" << std::hex << RTN_Address(startRtn) << endl;
+      //JIT mode
+      RTN_Open(startRtn);
+      RTN_InsertCall(startRtn, IPOINT_BEFORE, AFUNPTR(GTPinLoader), IARG_END);
+      RTN_Close(startRtn);
+    }
+    else 
+    {
+        *out << "_start and Image entry are at the same address - skipping inserting call to gtpin loader the second time" << endl;
+    }
+  }
 
 public:
   static KNOB<BOOL> KnobProbe;
@@ -299,7 +339,8 @@ public:
       gtpin_argv[gtpin_argc-1] =  KnobGTPinDir.Value().c_str();
         *out << "gtpinarg " << gtpin_argc - 1 << " " << gtpin_argv[gtpin_argc - 1] << endl;
     }
-    IMG_AddInstrumentFunction(image, 0);
+    if (KnobProbe) IMG_AddInstrumentFunction(imageProbe, 0);
+    else IMG_AddInstrumentFunction(imageJIT, 0);
     return 0;
   }
 };
