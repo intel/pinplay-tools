@@ -11,7 +11,7 @@ then
   echo "Set GTPIN_KIT to point to the 'Profilers' directory from the latest GT-Pin kit ( see from https://www.intel.com/content/www/us/en/developer/articles/tool/gtpin.html )."
   exit 1
 fi
-make clean; make
+make clean; make DEBUG=1
 cd ../GTPinTool/build
 ./clean.sh
 ./build.sh
