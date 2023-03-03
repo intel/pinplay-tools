@@ -82,17 +82,6 @@ private:
     init = true;
   }
 
-  static VOID LibdlInitJITGTPinLoader()
-  {
-    static bool init = false;
-    if (init)          return;
-    if(KnobVerbose) *out << "LibdlInitJITGTPinLoader called" << endl;
-    *out << "Skiping GTPinLoader call" << endl;
-    //GTPinLoader("libdl.so");
-    init = true;
-    return;
-  }
-
   static VOID LibdlInitProbeGTPinLoader(FP_INIT origInit)
   {
     origInit();
@@ -146,7 +135,7 @@ private:
         RTN initRtn = RTN_FindByName(img, "_init");
         if (RTN_Valid(initRtn))
         {
-            if(KnobVerbose) *out << "_init 0x" << std::hex << RTN_Address(initRtn) << " given name:" << RTN_Name(initRtn) << endl;
+            if(KnobVerbose) *out << "_init 0x" << std::hex << RTN_Address(initRtn) << " given name:" << RTN_Name(initRtn) << " in image " << IMG_Name(img) << endl;
             if (RTN_IsSafeForProbedReplacement(initRtn))
             {
                 // Define a function prototype that describes the application routine that will be replaced.
@@ -210,7 +199,7 @@ private:
     }
     else 
     {
-        *out << "_start and Image entry are at the same address - skipping second probe" << endl;
+        if(KnobVerbose) *out << "_start and Image entry are at the same address - skipping second probe" << endl;
     }
   }
 
@@ -299,7 +288,7 @@ private:
     }
     else 
     {
-        *out << "_start and Image entry are at the same address - skipping inserting call to gtpin loader the second time" << endl;
+        if(KnobVerbose) *out << "_start and Image entry are at the same address - skipping inserting call to gtpin loader the second time" << endl;
     }
   }
 
