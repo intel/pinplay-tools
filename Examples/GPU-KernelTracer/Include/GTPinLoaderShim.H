@@ -97,6 +97,7 @@ private:
     const char* dlopenFuncName = "dlopen";
     const char* dlsymFuncName = "dlsym";
     const char* dlerrorFuncName = "dlerror";
+    static bool _initFound = false;
 
     string imgName = IMG_Name(img);
         if(KnobVerbose) *out << "Loaded image: " << imgName << endl;
@@ -146,14 +147,19 @@ private:
 
                 // Free the function prototype.
                 PROTO_Free(proto_init);
+                _initFound = true;
             }
             else
             {
                     *out << "Skip replacing _init in " << imgName << " since it is not safe." << endl;
             }
         }
+        else
+        {
+          *out << "_init not found in " << imgName << endl;
+        }
       }
-        return;
+        if (_initFound) return;
     }
 
     if (!IMG_IsMainExecutable(img))
