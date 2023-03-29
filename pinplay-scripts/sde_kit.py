@@ -155,11 +155,11 @@ class SDEKit(kit.Kit):
             path = os.path.join(path, self.simpoint_path, 'simpoint')
         if not os.path.isfile(path):
             msg.PrintMsg(
-                'ERROR: The required binary \'simpoint\' was not found.')
+                'WARNING: The required binary \'simpoint\' was not found.')
             msg.PrintMsg('   ' + path)
             msg.PrintMsg('Perhaps the SDE kit installation was incomplete. Check to make sure\n' \
                 'there weren\'t any errors during the install.')
-            sys.exit(1)
+            #sys.exit(1)
 
         return True
 
