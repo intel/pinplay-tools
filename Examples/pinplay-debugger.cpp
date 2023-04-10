@@ -24,7 +24,7 @@ END_LEGAL */
 using namespace INSTLIB;
 using namespace CONTROLLER;
 
-#define KNOB_GDB_COMMAND_FILENAME "cmd_filename"
+#define KNOB_GDB_COMMAND_FILENAME "gdb:cmd_file"
 #define KNOB_FAMILY "pintool:play-debugger"
 
 static PINPLAY_ENGINE *pinplay_engine;

@@ -52,4 +52,3 @@ pinplay-debugger-shell$(OBJ_SUFFIX): pinplay-debugger-shell.cpp
 
 pinplay-driver.so:  pinplay-driver${OBJ_SUFFIX} pinplay-debugger-shell$(OBJ_SUFFIX)
 	$(LINKER) $(TOOL_LDFLAGS) $(LINK_EXE)$@ $^ $(TOOL_LPATHS) $(TOOL_LIBS) $(MYLIBS) $(EXTRA_LIBS) $(PIN_LIBS) $(DBG)
-

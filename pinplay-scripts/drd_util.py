@@ -343,7 +343,7 @@ def GdbBaseLogOpt():
     if kit_type == config.PINPLAY:
         kit_knobs = ' -log:controller_default_start 0'
     else:
-        kit_knobs = ' -t sde-pinplay-driver.so  -controller_default_start 0'
+        kit_knobs = ' -t sde-pinplay-debugger.so  -controller_default_start 0'
     log_opts = config.drdebug_base_log_options + kit_knobs + \
                 ' -gdb:cmd_file ' + config.gdb_cmd_file
 
