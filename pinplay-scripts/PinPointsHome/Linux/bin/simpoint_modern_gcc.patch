@@ -1,5 +1,6 @@
---- SimPoint.3.2/analysiscode/CmdLineParser.cpp	2015-07-03 15:39:50.764058631 +0200
-+++ SimPoint.3.2/analysiscode/CmdLineParser.cpp	2015-07-03 15:40:08.836997324 +0200
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/CmdLineParser.cpp SimPoint.3.2.patched/analysiscode/CmdLineParser.cpp
+--- SimPoint.3.2.orig/analysiscode/CmdLineParser.cpp	2023-05-05 14:24:12.419977811 -0400
++++ SimPoint.3.2.patched/analysiscode/CmdLineParser.cpp	2023-05-05 14:33:35.383994991 -0400
 @@ -71,6 +71,7 @@
  
  
@@ -8,8 +9,9 @@
  
  bool CmdLineParser::parseCmdLine(int argc, char **argv) {
      for (int argNdx = 0; argNdx < argc; argNdx++) {
---- SimPoint.3.2/analysiscode/Datapoint.h	2015-07-03 15:40:43.998824146 +0200
-+++ SimPoint.3.2/analysiscode/Datapoint.h	2015-07-03 15:41:00.519682904 +0200
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Datapoint.h SimPoint.3.2.patched/analysiscode/Datapoint.h
+--- SimPoint.3.2.orig/analysiscode/Datapoint.h	2023-05-05 14:24:12.419977811 -0400
++++ SimPoint.3.2.patched/analysiscode/Datapoint.h	2023-05-05 14:33:35.383994991 -0400
 @@ -83,6 +83,7 @@
  
  #include <vector>
@@ -18,8 +20,9 @@
  
  using namespace std;
  
---- SimPoint.3.2/analysiscode/Dataset.h	2015-07-03 15:41:12.052281565 +0200
-+++ SimPoint.3.2/analysiscode/Dataset.h	2015-07-03 15:41:23.860895020 +0200
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Dataset.h SimPoint.3.2.patched/analysiscode/Dataset.h
+--- SimPoint.3.2.orig/analysiscode/Dataset.h	2023-05-05 14:24:12.419977811 -0400
++++ SimPoint.3.2.patched/analysiscode/Dataset.h	2023-05-05 14:33:35.383994991 -0400
 @@ -83,6 +83,7 @@
  
  #include "Datapoint.h"
@@ -28,8 +31,9 @@
  
  class Dataset : public vector<Datapoint> {
      public:
---- SimPoint.3.2/analysiscode/FVParser.cpp	2015-07-03 15:42:00.870817376 +0200
-+++ SimPoint.3.2/analysiscode/FVParser.cpp	2015-07-03 15:42:16.595635028 +0200
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/FVParser.cpp SimPoint.3.2.patched/analysiscode/FVParser.cpp
+--- SimPoint.3.2.orig/analysiscode/FVParser.cpp	2023-05-05 14:24:12.419977811 -0400
++++ SimPoint.3.2.patched/analysiscode/FVParser.cpp	2023-05-05 14:33:35.383994991 -0400
 @@ -79,6 +79,7 @@
  #include "FVParser.h"
  #include "Utilities.h"
@@ -38,19 +42,18 @@
  
  // take care of a difference between G++ 2.96 and 3.x
  #if (__GNUC__ >= 3)
---- SimPoint.3.2/analysiscode/Utilities.h	2015-07-03 15:38:25.883648960 +0200
-+++ SimPoint.3.2/analysiscode/Utilities.h	2015-07-03 15:39:34.059190492 +0200
-@@ -86,6 +86,8 @@
- #include "Dataset.h"
- #include "Logger.h"
- #include <string>
-+#include <stdlib.h>
-+#include <limits.h>
+@@ -98,7 +99,7 @@
  
- string toString(int i);
- string toString(double d);
---- SimPoint.3.2/analysiscode/Simpoint.cpp	2022-09-08 11:47:21.951466000 -0400
-+++ SimPoint.3.2/analysiscode/Simpoint.cpp	2022-09-08 11:44:55.862358000 -0400
+ bool FVParser::nextLine(list<FVParserToken> *result) {
+     string line;
+-    const int BUF_SIZE = 1024 * 1024;
++    const int BUF_SIZE = 4096 * 4096;
+     char buffer[BUF_SIZE];
+     buffer[0] = '\0';
+     do {
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Simpoint.cpp SimPoint.3.2.patched/analysiscode/Simpoint.cpp
+--- SimPoint.3.2.orig/analysiscode/Simpoint.cpp	2023-05-05 14:24:12.419977811 -0400
++++ SimPoint.3.2.patched/analysiscode/Simpoint.cpp	2023-05-05 14:33:35.383994991 -0400
 @@ -107,7 +107,7 @@
      } else {
          input = fopen(filename.c_str(), "r");
@@ -195,3 +198,16 @@
                                      name);
              for (unsigned int r = 0; r < labels.size(); r++) {
                  /* output the label and the distance from the center of this point */
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Utilities.h SimPoint.3.2.patched/analysiscode/Utilities.h
+--- SimPoint.3.2.orig/analysiscode/Utilities.h	2023-05-05 14:24:12.419977811 -0400
++++ SimPoint.3.2.patched/analysiscode/Utilities.h	2023-05-05 14:33:35.383994991 -0400
+@@ -86,6 +86,8 @@
+ #include "Dataset.h"
+ #include "Logger.h"
+ #include <string>
++#include <stdlib.h>
++#include <limits.h>
+ 
+ string toString(int i);
+ string toString(double d);
+Only in SimPoint.3.2.patched/bin: simpoint
