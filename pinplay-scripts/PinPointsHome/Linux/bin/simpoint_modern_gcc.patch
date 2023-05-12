@@ -1,6 +1,6 @@
 diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/CmdLineParser.cpp SimPoint.3.2.patched/analysiscode/CmdLineParser.cpp
---- SimPoint.3.2.orig/analysiscode/CmdLineParser.cpp	2023-05-05 14:24:12.419977811 -0400
-+++ SimPoint.3.2.patched/analysiscode/CmdLineParser.cpp	2023-05-05 14:33:35.383994991 -0400
+--- SimPoint.3.2.orig/analysiscode/CmdLineParser.cpp	2006-01-03 20:24:58.000000000 -0500
++++ SimPoint.3.2.patched/analysiscode/CmdLineParser.cpp	2023-05-12 08:17:01.729762518 -0400
 @@ -71,6 +71,7 @@
  
  
@@ -10,8 +10,8 @@ diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/CmdLi
  bool CmdLineParser::parseCmdLine(int argc, char **argv) {
      for (int argNdx = 0; argNdx < argc; argNdx++) {
 diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Datapoint.h SimPoint.3.2.patched/analysiscode/Datapoint.h
---- SimPoint.3.2.orig/analysiscode/Datapoint.h	2023-05-05 14:24:12.419977811 -0400
-+++ SimPoint.3.2.patched/analysiscode/Datapoint.h	2023-05-05 14:33:35.383994991 -0400
+--- SimPoint.3.2.orig/analysiscode/Datapoint.h	2006-01-30 21:17:57.000000000 -0500
++++ SimPoint.3.2.patched/analysiscode/Datapoint.h	2023-05-12 08:17:01.729762518 -0400
 @@ -83,6 +83,7 @@
  
  #include <vector>
@@ -21,8 +21,8 @@ diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Datap
  using namespace std;
  
 diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Dataset.h SimPoint.3.2.patched/analysiscode/Dataset.h
---- SimPoint.3.2.orig/analysiscode/Dataset.h	2023-05-05 14:24:12.419977811 -0400
-+++ SimPoint.3.2.patched/analysiscode/Dataset.h	2023-05-05 14:33:35.383994991 -0400
+--- SimPoint.3.2.orig/analysiscode/Dataset.h	2006-01-30 21:17:57.000000000 -0500
++++ SimPoint.3.2.patched/analysiscode/Dataset.h	2023-05-12 08:17:01.729762518 -0400
 @@ -83,6 +83,7 @@
  
  #include "Datapoint.h"
@@ -32,8 +32,8 @@ diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Datas
  class Dataset : public vector<Datapoint> {
      public:
 diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/FVParser.cpp SimPoint.3.2.patched/analysiscode/FVParser.cpp
---- SimPoint.3.2.orig/analysiscode/FVParser.cpp	2023-05-05 14:24:12.419977811 -0400
-+++ SimPoint.3.2.patched/analysiscode/FVParser.cpp	2023-05-05 14:33:35.383994991 -0400
+--- SimPoint.3.2.orig/analysiscode/FVParser.cpp	2005-06-30 16:20:51.000000000 -0400
++++ SimPoint.3.2.patched/analysiscode/FVParser.cpp	2023-05-12 10:54:54.134051593 -0400
 @@ -79,6 +79,7 @@
  #include "FVParser.h"
  #include "Utilities.h"
@@ -42,18 +42,36 @@ diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/FVPar
  
  // take care of a difference between G++ 2.96 and 3.x
  #if (__GNUC__ >= 3)
-@@ -98,7 +99,7 @@
+@@ -86,6 +87,8 @@
+ #else
+     #include <strstream>
+ #endif
++const int BUF_SIZE = 4096 * 4096;
++char buffer[BUF_SIZE];
+ 
+ 
+ FVParser::FVParser(FILE *input_file) {
+@@ -98,8 +101,6 @@
  
  bool FVParser::nextLine(list<FVParserToken> *result) {
      string line;
 -    const int BUF_SIZE = 1024 * 1024;
-+    const int BUF_SIZE = 4096 * 4096;
-     char buffer[BUF_SIZE];
+-    char buffer[BUF_SIZE];
      buffer[0] = '\0';
      do {
+         fgets(buffer, BUF_SIZE, input);
+diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Makefile SimPoint.3.2.patched/analysiscode/Makefile
+--- SimPoint.3.2.orig/analysiscode/Makefile	2005-06-30 17:55:04.000000000 -0400
++++ SimPoint.3.2.patched/analysiscode/Makefile	2023-05-12 08:21:01.509769835 -0400
+@@ -1,4 +1,4 @@
+-CPPFLAGS = -Wall -pedantic -pedantic-errors -O3
++CPPFLAGS = -Wall -pedantic -pedantic-errors -O3 -g
+ 
+ CXX = g++
+ 
 diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Simpoint.cpp SimPoint.3.2.patched/analysiscode/Simpoint.cpp
---- SimPoint.3.2.orig/analysiscode/Simpoint.cpp	2023-05-05 14:24:12.419977811 -0400
-+++ SimPoint.3.2.patched/analysiscode/Simpoint.cpp	2023-05-05 14:33:35.383994991 -0400
+--- SimPoint.3.2.orig/analysiscode/Simpoint.cpp	2006-02-01 14:39:48.000000000 -0500
++++ SimPoint.3.2.patched/analysiscode/Simpoint.cpp	2023-05-12 08:17:01.729762518 -0400
 @@ -107,7 +107,7 @@
      } else {
          input = fopen(filename.c_str(), "r");
@@ -199,8 +217,8 @@ diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Simpo
              for (unsigned int r = 0; r < labels.size(); r++) {
                  /* output the label and the distance from the center of this point */
 diff --unified --recursive --no-dereference SimPoint.3.2.orig/analysiscode/Utilities.h SimPoint.3.2.patched/analysiscode/Utilities.h
---- SimPoint.3.2.orig/analysiscode/Utilities.h	2023-05-05 14:24:12.419977811 -0400
-+++ SimPoint.3.2.patched/analysiscode/Utilities.h	2023-05-05 14:33:35.383994991 -0400
+--- SimPoint.3.2.orig/analysiscode/Utilities.h	2006-02-01 14:39:48.000000000 -0500
++++ SimPoint.3.2.patched/analysiscode/Utilities.h	2023-05-12 08:17:01.729762518 -0400
 @@ -86,6 +86,8 @@
  #include "Dataset.h"
  #include "Logger.h"
