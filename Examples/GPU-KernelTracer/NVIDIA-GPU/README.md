@@ -32,17 +32,17 @@ cd CPUPinTool
 ```
 
 ## How to run:
-set ***LIT2ELF*** __<path to  applications.tracing.lit.lit2elf>__
+set ***PINPLAYTOOLS*** __<path to pinplay-tools >__
 ### WARNING: do not use SDE-built tool with Pin or vice versa
 
 ### Pin-based run
 
 ```
-LD_PRELOAD=$LIT2ELF/Tools/XPU-Pin/NvidiaGPU/NVbitTool/NVbitTool.so $PIN_ROOT/pin -t $LIT2ELF/Tools/XPU-Pin/NvidiaGPU/CPUPinTool/obj-intel64/xpu-pin-nvbit-handler.so -nvbittool LIT2ELF/Tools/XPU-Pin/NvidiaGPU/NVbitTool/NVbitTool.so -- hellocuda
+LD_PRELOAD=$PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitTool.so $PIN_ROOT/pin -t $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/CPUPinTool/obj-intel64/xpu-pin-nvbit-handler.so -nvbittool $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitTool.so -- hellocuda
 ```
 
 ### SDE-based run
 ```
-$SDE_BUILD_KIT/sde64 -env LD_PRELOAD $LIT2ELF/Tools/XPU-Pin/NvidiaGPU/NVbitTool/NVbitTool.so -t64 $LIT2ELF/Tools/XPU-Pin/NvidiaGPU/CPUPinTool/obj-intel64/xpu-pin-nvbit-handler.so -nvbittool $LIT2ELF/Tools/XPU-Pin/NvidiaGPU/NVbitTool/NVbitTool.so -- hellocuda
+$SDE_BUILD_KIT/sde64 -env LD_PRELOAD $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitTool.so -t64 $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/CPUPinTool/obj-intel64/xpu-pin-nvbit-handler.so -nvbittool $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitTool.so -- hellocuda
 ```
 
