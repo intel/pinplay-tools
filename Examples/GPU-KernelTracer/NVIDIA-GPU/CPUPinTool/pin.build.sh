@@ -9,7 +9,7 @@ fi
 if [ -z $CUDA_LIB ];
 then
   echo "Put CUDE compiler/runtime in your environment: put the location on 'nvcc' in your PATH and set CUDA_LIB, CUDA_INC"
-  exit 1
+  #exit 1
 fi
 if [ -z $NVBIT_KIT ];
 then

@@ -45,4 +45,23 @@ LD_PRELOAD=$PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitToo
 ```
 $SDE_BUILD_KIT/sde64 -env LD_PRELOAD $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitTool.so -t64 $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/CPUPinTool/obj-intel64/xpu-pin-nvbit-handler.so -nvbittool $PINPLAYTOOLS/Examples/GPU-KernelTracer/NVIDIA-GPU/NVBitTool/NVBitTool.so -- hellocuda
 ```
-
+###  Combining mpirun with XPU-Analysis
+The suggested command line is this:
+```
+  mpirun <mpirun args> pin/sde tool-invocation -- application <args>
+```
+Howerver, use of LD_PRELOAD in the command above is tricky. Here's one way to get mpirun+LD_PRELOAD+pin/sde combination to work.
+Create a script apprun.sh:
+```
+#!/bin/bash
+LD_PRELOAD=<....> application <args>
+```
+If using SDE:
+```
+  mpirun <mpirun args> sde64 -t64 path-to-sde_tool -- apprun.sh
+```
+If using Pin:
+```
+  mpirun <mpirun args> pin -follow_execv -t path-to-pin_tool -- apprun.sh
+```
+Note the use of '-follow_execv' in the Pin case (the sde driver sets that flag by default when it invokes the underlying pin driver).
