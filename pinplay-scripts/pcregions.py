@@ -36,10 +36,6 @@
 # actions on it.  Default is to generate a regions CSV file from a BBV file.
 # Other actions include:
 #   normalizing and projecting FV file to a lower dimension
-#
-# November 2016: Modified by Harish Patil to create LLVMPoints
-# Requires Python scripts from SDE (PinPlay) kit (sde-pinplay-*-lin)
-# Used by  the script 'runllvmsimpoint.sh'
 
 
 import datetime
