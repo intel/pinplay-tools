@@ -72,7 +72,11 @@ class GLOBALBLOCK : public BLOCK
     INT32 IdGlobal() const {return _idglobal;}
     GLOBALBLOCK(const BLOCK_KEY & key, INT32 instructionCount, INT32 id,
      INT32 imgId)
+#ifdef OLDSDE
         : BLOCK(key, instructionCount, id, imgId)
+#else
+        : BLOCK(key, instructionCount, id, imgId,1,FALSE)
+#endif  
     { 
       _sliceBlockCountGlobal._count = 0;
       _cumulativeBlockCountGlobal._count = 0;

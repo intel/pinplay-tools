@@ -19,6 +19,9 @@ if [[  -z $PINBALL2ELF ]]; then
     exit 1
 fi
 
+echo "For older SDE ( sde-external-9.14 or older) set 'export CFLAGS=-DOLDSDE'"
+echo "*********************"
+sleep 1
 cd ./EventCounter
 make clean TARGET=ia32
 make clean TARGET=intel64
@@ -29,28 +32,30 @@ make clean TARGET=intel64
 cd -
 
 cd ./Profiler/DCFG
-make clean
-make TARGET=ia32
-make TARGET=intel64
-cd -
-
-cd Drivers/BarrierPoint/
-make clean
-make TARGET=ia32 
-make build TARGET=ia32 
 make clean TARGET=ia32 
-make TARGET=intel64 
-make build TARGET=intel64 
+make clean TARGET=intel64 
+# for older SDE ( sde-external-9.14 or older) use "export CFLAGS=-DOLDSDE"
+make TARGET=ia32 CFLAGS=$CFLAGS
+make clean TARGET=ia32 
+make TARGET=intel64 CFLAGS=$CFLAGS
 make clean TARGET=intel64 
 cd -
 
-cd Drivers/FlowControlLoopPoint/
-make clean
-make TARGET=ia32 
-make build TARGET=ia32 
+cd Drivers/BarrierPoint/
 make clean TARGET=ia32 
-make TARGET=intel64 
-make build TARGET=intel64 
+make build TARGET=ia32 CFLAGS=$CFLAGS
+make clean TARGET=ia32
+make clean TARGET=intel64 
+make build TARGET=intel64 CFLAGS=$CFLAGS
+make clean TARGET=intel64
+cd -
+
+cd Drivers/FlowControlLoopPoint/
+make clean TARGET=ia32 
+make build TARGET=ia32  CFLAGS=$CFLAGS
+make clean TARGET=ia32 
+make clean TARGET=intel64 
+make build TARGET=intel64  CFLAGS=$CFLAGS
 make clean TARGET=intel64 
 cd -
 
