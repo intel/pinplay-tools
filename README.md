@@ -19,3 +19,7 @@ GlobalLoopPoint: sources for tools doing global profiling of multi-threaded prog
 Alen Sabu (National University of Singapore), Harish Patil, Wim Heirman (Intel), Trevor E. Carlson (National University of Singapore)
 
 pinplay-scripts: Python scripts to automate simulation region selection for SDE-based single threaded and multi-threaded programs.
+
+Also see CGO-2021 ELFie paper: ELFies: Executable Region Checkpoints for Performance Analysis and Simulation 
+  Harish Patil; Alexander Isaev; Wim Heirman; Alen Sabu; Ali Hajiabadi; Trevor E. Carlson
+
