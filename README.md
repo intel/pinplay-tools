@@ -23,3 +23,9 @@ pinplay-scripts: Python scripts to automate simulation region selection for SDE-
 Also see CGO-2021 ELFie paper: ELFies: Executable Region Checkpoints for Performance Analysis and Simulation 
   Harish Patil; Alexander Isaev; Wim Heirman; Alen Sabu; Ali Hajiabadi; Trevor E. Carlson
 
+
+Coming soon: instructions for 'traditional' (single-threaded) PinPoints.
+
+TIPS:
+ 1. If using PinPoints scripts, do not use "~" to specify any paths, instead use "$HOME"
+   e.g. the option “--sdehome=~/sde-external-9.33.0-2024-01-07-lin” should be “--sdehome=$HOME/sde-external-9.33.0-2024-01-07-lin”. 

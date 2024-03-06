@@ -80,7 +80,7 @@ class SDEKit(kit.Kit):
     # Some definitions for the kit.
     #
     default_dir = 'SDE'
-    pin = 'sde'
+    pin = 'sde64'
     type = 'SDE'
     prefix = '-p'
 
