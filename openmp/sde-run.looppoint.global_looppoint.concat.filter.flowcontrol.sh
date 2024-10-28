@@ -113,6 +113,7 @@ pdir="$wpbname.pp"
 csvfile=`ls $ddir/*global.pinpoints.csv`
 $SDE_BUILD_KIT/pinplay-scripts/split.pc-csvfile.py --csv_file $csvfile
 echo "SDE_BUILD_KIT  = $SDE_BUILD_KIT" > Makefile.regions
+# Using sde64 below as 'make' and 32-bit 'sde' binary do not work well
 for rcsv in `ls $ddir/*.CSV`
 do
   rid=`echo $rcsv | awk -F "." '{print $(NF-1)}'`
@@ -120,7 +121,7 @@ do
   #echo $rcsv $rid $rpbname
   rstr="t"$rid
   echo $rstr":" >> Makefile.regions
-  echo "	\${SDE_BUILD_KIT}/sde -p -xyzzy -p -reserve_memory -p $wpb.address   -t sde-global-looppoint.so -replay -xyzzy  -replay:deadlock_timeout 0  -replay:basename $wpb -replay:playout 0  -replay:strace  -dcfg -dcfg:read_dcfg 1 -log:fat -log -xyzzy -pcregions:in $rcsv -pcregions:merge_warmup -log:basename $pdir/$rpbname -log:compressed bzip2  -log:mt 1 -- \${SDE_BUILD_KIT}/intel64/nullapp" >> Makefile.regions
+  echo "	\${SDE_BUILD_KIT}/sde64 -p -xyzzy -p -reserve_memory -p $wpb.address   -t sde-global-looppoint.so -replay -xyzzy  -replay:deadlock_timeout 0  -replay:basename $wpb -replay:playout 0  -replay:strace  -dcfg -dcfg:read_dcfg 1 -log:fat -log -xyzzy -pcregions:in $rcsv -pcregions:merge_warmup -log:basename $pdir/$rpbname -log:compressed bzip2  -log:mt 1 -- \${SDE_BUILD_KIT}/intel64/nullapp" >> Makefile.regions
   astr=$astr" "$rstr
 done
 echo "all:" $astr >> Makefile.regions

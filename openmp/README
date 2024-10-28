@@ -21,3 +21,13 @@ make
  replaying dotproduct.1_79259.pp/dotproduct.1_79259_3
  replaying dotproduct.1_79259.pp/dotproduct.1_79259_4
 
+
+# To run single-threaded PinPoints, see ../PinPoints/README.md
+ cd $SDE_BUILD_KIT/pinkit/sde-example/example
+ make TARGET=ia32 clean;  make TARGET=ia32
+ make TARGET=intel64 clean;  make TARGET=intel64
+ cp obj-ia32/pcregions_control.so $SDE_BUILD_KIT/ia32
+ cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
+ make clean; make
+ sde-run.pinpoints.single-threaded.sh
+

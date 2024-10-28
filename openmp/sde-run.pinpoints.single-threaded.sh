@@ -10,13 +10,13 @@
 #  make TARGET=intel64 clean;  make TARGET=intel64
 #  cp obj-ia32/pcregions_control.so $SDE_BUILD_KIT/ia32
 #  cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
-export OMP_NUM_THREADS=8
+export OMP_NUM_THREADS=0
 SLICESIZE=80000000
 WARMUP_FACTOR=0
 MAXK=5
-PROGRAM=dotproduct
+PROGRAM=dotproduct-st
 INPUT=1
-COMMAND="./dotproduct-omp"
+COMMAND="./dotproduct-st"
 
 PCCOUNT="--pccount_regions"
 WARMUP="--warmup_factor $WARMUP_FACTOR" 
@@ -82,10 +82,11 @@ echo "source ./$sch.env.sh"
 source ./$sch.env.sh
 
 #Whole Program Logging and replay using the default sde tool
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --delete --mode mt --log_options="-start_address main -log:fat -log:mp_mode 0 -log:mp_atomic 0" --replay_options="-replay:strace" -l -r 
+# We are recording starting at 'main'
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --delete --mode st --log_options="-start_address main -log:fat -log:mp_mode 0 -log:mp_atomic 0" --replay_options="-replay:strace" -l -r 
 
 #Profiling using regular profiler from the default sde tool
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --mode mt -S $SLICESIZE -b 
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --mode st -S $SLICESIZE -b 
 
 #Simpoint
 $SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" $PCCOUNT -S $SLICESIZE $WARMUP --maxk=$MAXK --append_status -s 
@@ -110,7 +111,7 @@ do
   #echo $rcsv $rid $rpbname
   rstr="t"$rid
   echo $rstr":" >> Makefile.regions
-  echo "	\${SDE_BUILD_KIT}/sde64 -p -xyzzy -p -reserve_memory -p $wpb.address   -t pcregions_control.so -replay -xyzzy  -replay:deadlock_timeout 0  -replay:basename $wpb -replay:playout 0  -replay:strace  -dcfg -dcfg:read_dcfg 1 -log:fat -log -xyzzy -pcregions:in $rcsv -pcregions:merge_warmup -log:basename $pdir/$rpbname -log:compressed bzip2  -log:mt 1 -- \${SDE_BUILD_KIT}/intel64/nullapp" >> Makefile.regions
+  echo "	\${SDE_BUILD_KIT}/sde64 -p -xyzzy -p -reserve_memory -p $wpb.address   -t pcregions_control.so -replay -xyzzy  -replay:deadlock_timeout 0  -replay:basename $wpb -replay:playout 0  -replay:strace  -dcfg -dcfg:read_dcfg 1 -log:fat -log -xyzzy -pcregions:in $rcsv -pcregions:merge_warmup -log:basename $pdir/$rpbname -log:compressed bzip2  -log:mt 0 -- \${SDE_BUILD_KIT}/intel64/nullapp" >> Makefile.regions
   astr=$astr" "$rstr
 done
 echo "all:" $astr >> Makefile.regions
