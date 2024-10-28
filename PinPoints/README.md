@@ -10,6 +10,9 @@
 
 # Example : run PinPoints flow on 'dotproduct-st'
   cd ../openmp
+  
   <See README>
+  
   make clean; make
+  
   sde-run.pinpoints.single-threaded.sh
