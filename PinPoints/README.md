@@ -5,8 +5,7 @@
   4. Replay wpb and use representative region specification to create region pinballs (rpb's)
   5. Replay rpbs,
 
-#  See the HPCA-2013 Tutorial : Deterministic PinPoints 
-   https://snipersim.org/w/Tutorial:HPCA\_2013\_PinPoints
+#  See the HPCA-2013 Tutorial : [ Deterministic PinPoints ]  (https://snipersim.org/w/Tutorial:HPCA_2013_PinPoints)
 
 # Example : run PinPoints flow on 'dotproduct-st'
   cd ../openmp
