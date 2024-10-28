@@ -1,4 +1,4 @@
-#PinPoints:  Instructions for running Pin+SimPoint toolchain with the following steps:
+# PinPoints:  Instructions for running Pin+SimPoint toolchain with the following steps:
   1. Generate whole-program pinball (wpb)
   2. Replay wpb and create basic block vectors (bbvs)
   3. Use SimPoint to cluster bbvs and find representative regions (
