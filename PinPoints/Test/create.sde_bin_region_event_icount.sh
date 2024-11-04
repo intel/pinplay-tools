@@ -66,8 +66,9 @@ SDE_ROOT=$SDE_BUILD_KIT
         startCount=`echo $rec | awk -F"," '{print $7}'`
         endCount=`echo $rec | awk -F"," '{print $11}'`
         cfgfile=$b.$i.cfg
-        cmd=`grep command $cfgfile | sed '/command: /s///'`
-COMMAND="\$SDE_ROOT/sde64 -t64 \$SDE_ROOT/intel64/sde-global-event-icounter.so -thread_count 1 -prefix $ppdir/$rpbname -controller_log -controller_olog pcevents.controller.$pgm.$i.$rid.txt -watch_addr $startPC -watch_addr $endPC -xyzzy  -control start:address:$startPC:count$startCount -control stop:address:$endPC:count$endCount -exit_on_stop -- $cmd"
+        #cmd=`grep command $cfgfile | sed '/command: /s///'`
+        cmd="\$SDE_ROOT/intel64/nullapp"
+COMMAND="\$SDE_ROOT/sde64 -t64 \$SDE_ROOT/intel64/sde-global-event-icounter.so -thread_count 1 -prefix $ppdir/$rpbname -controller_log -controller_olog pcevents.controller.$pgm.$i.$rid.txt -watch_addr $startPC -watch_addr $endPC -xyzzy  -control start:address:$startPC:count$startCount -control stop:address:$endPC:count$endCount -exit_on_stop -replay -replay:basename $wpb -replay:addr_trans  -- $cmd"
         echo "#!/bin/bash" > run.sde-eventcount.$pgm.$i.$rid.sh
         echo "export SDE_ROOT=$SDE_ROOT" >> run.sde-eventcount.$pgm.$i.$rid.sh
         echo "ulimit -s unlimited" >> run.sde-eventcount.$pgm.$i.$rid.sh

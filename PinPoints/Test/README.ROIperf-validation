@@ -21,7 +21,6 @@ Steps:
   2.2 Region ROIPerf runs
     o Split the pinpoints *.csv file into per region *.CSV file
       $SDE_BUILD_KIT/pinplay-scripts/split.pc-csvfile.py --csv_file dotproduct.1_XXXXXX.Data/dotproduct.1_XXXXXX.global.pinpoints.csv
-    #SKIP for SDE 9.14 or newer#o ./create.sde_pinball_region_event_icount.sh 
     o ./create.sde_bin_region_event_icount.sh 
     o ./runall.region-event-icounter.sh [ SDE_BUILD_KIT populated with looppoint tools is required]
     o ./runall.rgnbinperf.sh

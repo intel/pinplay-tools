@@ -65,7 +65,7 @@ fi
         if [ $haswarmup -gt 0 ];
         then
           wrec=`grep "warmup" $rcvs` 
-#Warmup for regionid 10,global,21,0x4049ab,ft.C.x,0x49ab,2177531858,0x4046b0,ft.C.x,0x46b0,5473634570,29666648,1600000124,0.00000,0.000,warmup:10
+#Warmup for regionid 10,0,21,0x4049ab,ft.C.x,0x49ab,2177531858,0x4046b0,ft.C.x,0x46b0,5473634570,29666648,1600000124,0.00000,0.000,warmup:10
         PC=`echo $wrec | awk -F"," '{print $8}'`
         wePC=`echo $PC | sed '/0x/s///' | tr '[:lower:]' '[:upper:]'  | awk '{print "obase=10;ibase=16;"$1}' | bc  | awk '{printf "0x%09x\n",$1}'`
           weCount=`echo $wrec | awk -F"," '{print $12}'`
