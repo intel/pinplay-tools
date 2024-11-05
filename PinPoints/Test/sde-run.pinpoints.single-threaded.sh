@@ -12,11 +12,12 @@
 #  cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
 export OMP_NUM_THREADS=0
 SLICESIZE=10000000
-WARMUP_FACTOR=0
+WARMUP_FACTOR=2
 MAXK=10
 PROGRAM=dotproduct-st
 INPUT=1
 COMMAND="./dotproduct-st"
+SDE_ARCH="-skl" # AMX registers introduced in Sapphire Rapids (-spr) not handled by 'pinball2elf' yet.
 
 PCCOUNT="--pccount_regions"
 WARMUP="--warmup_factor $WARMUP_FACTOR" 
@@ -60,36 +61,15 @@ then
   exit 1
 fi
 
-if [ ! -e $SDE_BUILD_KIT/ia32/pcregions_control.so ];
-then
-  echo " $SDE_BUILD_KIT/ia32/pcregions_control.so is missing"
-  echo "   See build instructions above"
-  exit 1
-fi
-
-sch="active"
-if [ $# -eq 1 ];
-then
- sch=$1
-fi
-
-if [ ! -e $sch.env.sh ];
-then
-  echo "./$sch.env.sh does not exist; using ./active.env.sh"
-  sch="active"
-fi
-echo "source ./$sch.env.sh"
-source ./$sch.env.sh
-
 #Whole Program Logging and replay using the default sde tool
 # We are recording starting at 'main'
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --delete --mode st --log_options="-start_address main -log:fat -log:mp_mode 0 -log:mp_atomic 0" --replay_options="-replay:strace" -l -r 
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py --pin_options "$SDE_ARCH" $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --delete --mode st --log_options="-start_address main -log:fat -log:mp_mode 0 -log:mp_atomic 0" --replay_options="-replay:strace" -l -r 
 
 #Profiling using regular profiler from the default sde tool
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --mode st -S $SLICESIZE -b 
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py --pin_options "$SDE_ARCH" $GLOBAL $PCCOUNT --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --mode st -S $SLICESIZE -b 
 
 #Simpoint
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" $PCCOUNT -S $SLICESIZE $WARMUP --maxk=$MAXK --append_status -s 
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py --pin_options "$SDE_ARCH" $GLOBAL $PCCOUNT  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" $PCCOUNT -S $SLICESIZE $WARMUP --maxk=$MAXK --append_status -s 
 
 #Region pinball generation and replay
 # This does not work because currently the tool pcregions_control.so is NOT 
@@ -111,7 +91,7 @@ do
   #echo $rcsv $rid $rpbname
   rstr="t"$rid
   echo $rstr":" >> Makefile.regions
-  echo "	\${SDE_BUILD_KIT}/sde64 -p -xyzzy -p -reserve_memory -p $wpb.address   -t pcregions_control.so -replay -xyzzy  -replay:deadlock_timeout 0  -replay:basename $wpb -replay:playout 0  -replay:strace  -dcfg -dcfg:read_dcfg 1 -log:fat -log -xyzzy -pcregions:in $rcsv -pcregions:merge_warmup -log:basename $pdir/$rpbname -log:compressed bzip2  -log:mt 0 -- \${SDE_BUILD_KIT}/intel64/nullapp" >> Makefile.regions
+  echo "	\${SDE_BUILD_KIT}/sde64 $SDE_ARCH -p -xyzzy -p -reserve_memory -p $wpb.address   -t pcregions_control.so -replay -xyzzy  -replay:deadlock_timeout 0  -replay:basename $wpb -replay:playout 0  -replay:strace  -dcfg -dcfg:read_dcfg 1 -log:fat -log -xyzzy -pcregions:in $rcsv -pcregions:merge_warmup -log:basename $pdir/$rpbname -log:compressed bzip2  -log:mt 0 -- \${SDE_BUILD_KIT}/intel64/nullapp" >> Makefile.regions
   astr=$astr" "$rstr
 done
 echo "all:" $astr >> Makefile.regions
