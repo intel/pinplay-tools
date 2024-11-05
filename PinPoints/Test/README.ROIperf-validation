@@ -9,9 +9,9 @@ Pre-requisites:
 
 Steps:
 -----
- 1. Run LoopPoints tools : See ./README
-    o setenv SDE_BUILD_KIT <sde-external-9.0.0-2021-11-07-lin>
-    o < build GlobalLoopPoint tools [ see ./README] >
+ 1. Run PinPoints tools : See ./README
+    o setenv SDE_BUILD_KIT <sde-external-.....>
+    o < build pcregions_control.so tools [ see ./README] >
     o Run sde-run.looppoint.global_looppoint.concat.filter.flowcontrol.sh
  2. Run ROI-perf
   Make sure PIN_ROOT and PINBALL2ELF are set as listed in "Pre-requisites" above 

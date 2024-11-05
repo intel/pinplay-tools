@@ -11,9 +11,9 @@
 #  cp obj-ia32/pcregions_control.so $SDE_BUILD_KIT/ia32
 #  cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
 export OMP_NUM_THREADS=0
-SLICESIZE=80000000
+SLICESIZE=10000000
 WARMUP_FACTOR=0
-MAXK=5
+MAXK=10
 PROGRAM=dotproduct-st
 INPUT=1
 COMMAND="./dotproduct-st"
