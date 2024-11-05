@@ -12,12 +12,12 @@
 #  cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
 export OMP_NUM_THREADS=0
 SLICESIZE=10000000
-WARMUP_FACTOR=2
+WARMUP_FACTOR=0
 MAXK=10
 PROGRAM=dotproduct-st
 INPUT=1
 COMMAND="./dotproduct-st"
-SDE_ARCH="-skl" # AMX registers introduced in Sapphire Rapids (-spr) not handled by 'pinball2elf' yet.
+#SDE_ARCH="-skl" # AMX registers introduced in Sapphire Rapids (-spr) not handled by 'pinball2elf' yet.
 
 PCCOUNT="--pccount_regions"
 WARMUP="--warmup_factor $WARMUP_FACTOR" 

@@ -108,12 +108,12 @@ export ROIPERF_PERFLIST="0:0,0:1"
       echo "~/bin/clean_slate"
       ~/bin/clean_slate
       pwd
-      #for run in 1 2 3 4 5 6 7 8
-      for run in 1 2 3 4 5 6 7 8
+      for run in 0 1 2 3 4 5 6 7 8
       do
         echo "RUN: $run $b.$i region $rid run.regionbinperf.sh"
         time ./run.regionbinperf.sh
         cp  $ppdir/$rpbname.0.BIN.perf.txt $ppdir/$rpbname.0.BIN.perf.txt.$run
         cat $ppdir/$rpbname.0.BIN.perf.txt.$run
       done
+      rm $ppdir/$rpbname.0.BIN.perf.txt.0 # Ignore the first run
     done

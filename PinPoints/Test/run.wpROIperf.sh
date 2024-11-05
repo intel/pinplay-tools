@@ -47,10 +47,11 @@ COMMAND="$PIN_ROOT/pin -t $ROIPERF -probecontrol:in probe.in -probecontrol:verbo
   export ROIPERF_PERFLIST="0:0,0:1"
   pwd
   echo "perf counting  ROIPERF_PERFLIST $ROIPERF_PERFLIST"
-  for run in 1 2 3 4 5 6 7 8
+  for run in 0 1 2 3 4 5 6 7 8
   do
         echo "RUN: $run $b.$i wp bin "
         time ./run.wpbinperf.sh
         mv perf.$i.wp.0.perf.txt  $wpb.0.BIN.perf.txt.$run
         cat $wpb.0.BIN.perf.txt.$run
   done
+  rm $wpb.0.BIN.perf.txt.0 # ignore the first run
