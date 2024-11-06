@@ -11,9 +11,9 @@
 #  cp obj-ia32/pcregions_control.so $SDE_BUILD_KIT/ia32
 #  cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
 export OMP_NUM_THREADS=0
-SLICESIZE=10000000
-WARMUP_FACTOR=0
-MAXK=10
+SLICESIZE=75000
+WARMUP_FACTOR=3
+MAXK=30
 PROGRAM=dotproduct-st
 INPUT=1
 COMMAND="./dotproduct-st"
@@ -36,7 +36,7 @@ fi
 if [ ! -e $SDE_BUILD_KIT/pinplay-scripts ];
 then
   echo "$SDE_BUILD_KIT/pinplay-scripts does not exist"
-  cp -r ../pinplay-scripts $SDE_BUILD_KIT
+  cp -r ../../pinplay-scripts $SDE_BUILD_KIT
 fi
 
 if [ ! -e $SDE_BUILD_KIT/pinplay-scripts/PinPointsHome/Linux/bin/simpoint ];

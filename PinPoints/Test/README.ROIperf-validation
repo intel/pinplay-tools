@@ -9,10 +9,10 @@ Pre-requisites:
 
 Steps:
 -----
- 1. Run PinPoints tools : See ./README
+ 1. Run PinPoints tools : 
     o setenv SDE_BUILD_KIT <sde-external-.....>
     o < build pcregions_control.so tools [ see ./README] >
-    o Run sde-run.looppoint.global_looppoint.concat.filter.flowcontrol.sh
+    o Run sde-run.pinpoints.single-threaded.sh
  2. Run ROI-perf
   Make sure PIN_ROOT and PINBALL2ELF are set as listed in "Pre-requisites" above 
   2.1 Whole-program ROIPerf runs
