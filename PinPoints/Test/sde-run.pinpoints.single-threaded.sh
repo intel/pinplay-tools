@@ -17,7 +17,7 @@ MAXK=20
 PROGRAM=dotproduct-st
 INPUT=1
 COMMAND="./dotproduct-st"
-#SDE_ARCH="-skl" # AMX registers introduced in Sapphire Rapids (-spr) not handled by 'pinball2elf' yet.
+SDE_ARCH="-skl" # AMX registers introduced in Sapphire Rapids (-spr) not handled by 'pinball2elf' yet.
 
 PCCOUNT="--pccount_regions"
 WARMUP="--warmup_factor $WARMUP_FACTOR" 
@@ -84,6 +84,8 @@ csvfile=`ls $ddir/*.pinpoints.csv`
 $SDE_BUILD_KIT/pinplay-scripts/split.pc-csvfile.py --csv_file $csvfile
 echo "SDE_BUILD_KIT  = $SDE_BUILD_KIT" > Makefile.regions
 # Using sde64 below as 'make' and 32-bit 'sde' binary do not work well
+#Create Makefile.regions with commands for relogging all regions 
+# and use 'make -j Makefile.regions' create all region pinballs in parallel
 for rcsv in `ls $ddir/*.CSV`
 do
   rid=`echo $rcsv | awk -F "." '{print $(NF-1)}'`
@@ -98,6 +100,7 @@ echo "all:" $astr >> Makefile.regions
 echo "Makefile.regions created"
 echo "Running with -j $PAR"
 make -j $PAR -f Makefile.regions all
+# Replay each region pinball serially
 for rpb in `ls $pdir/*.address`
 do
   rpbname=`echo $rpb | sed '/.address/s///'`
