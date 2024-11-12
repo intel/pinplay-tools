@@ -12,15 +12,15 @@
 ## Pre-requisites
 Pin kit >= 3.31 : http://pintool.intel.com  ( search for "Intel Pintool")
 
-export PIN_ROOT=<path to the local copy of the Pin kit >
+export PIN_ROOT="path to the local copy of the Pin kit "
 
 Intel SDE  >= 9.44  :  ( search for "Intel SDE") 
 
-export SDE_BUILD_KIT=<path to the  local copy of the SDE Kit>
+export SDE_BUILD_KIT="path to the  local copy of the SDE Kit"
 
 Pinball2elf repo: https://github.com/intel/pinball2elf 
 
-export PINBALL2ELF=<path to the  local clone of the pinball2elf repo>
+export PINBALL2ELF="path to the  local clone of the pinball2elf repo"
 
 Assumption: using “bash”:  put “.” in PATH 
 
