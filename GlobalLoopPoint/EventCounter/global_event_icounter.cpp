@@ -60,6 +60,7 @@ using namespace CONTROLLER;
 
 static FILTER_MOD filter;
 static BOOL filter_used = FALSE;
+static BOOL warmup_seen = FALSE;
 
 static CACHELINE_COUNTER global_ins_counter  = {0,0};
 static CACHELINE_COUNTER global_filtered_ins_counter  = {0,0};
@@ -113,6 +114,8 @@ KNOB<ADDRINT> KnobWatchAddr(KNOB_MODE_APPEND, "pintool", "watch_addr", "",
                   "Address to watch");
 KNOB<BOOL>KnobExitOnStop(KNOB_MODE_WRITEONCE,"pintool", "exit_on_stop", "0",
                        "Exit on Sim-End");
+KNOB<BOOL>KnobWarmup(KNOB_MODE_WRITEONCE,"pintool", "warmup", "0",
+                       "Treat the first start event as warmup-start");
 
 
 CONTROL_GLOBALPCREGIONS *control_pcregions = NULL;
@@ -223,6 +226,11 @@ VOID Handler(EVENT_TYPE ev, VOID * v, CONTEXT * ctxt, VOID * ip,
     {
       case EVENT_START:
         eventstr="Sim-Start";
+        if(KnobWarmup && (warmup_seen==FALSE))
+        {
+          eventstr="Warmup-Start";
+          warmup_seen = TRUE;
+        }
         break;
 
       case EVENT_WARMUP_START:
