@@ -1,5 +1,7 @@
 #!/bin/bash
 ulimit -s unlimited
+SNIPER_ROOT="ADD ME"
+SNIPER_ARGS="ADD ME"
   i=1 
     if [ ! -e  whole_program.$i ];
     then
@@ -87,9 +89,9 @@ COMMAND_RPB="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control star
 COMMAND_ELFIE="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startPC:count$start_rel_count -control stop:address:$endPC:count$end_rel_count\" -- $cmd"
         echo "!/bin/bash" > run.sniper.$pgm.$i.$rid.sh
         echo "#CHANGME" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "export SNIPER_ROOT=#AddMe" >>  run.sniper.$pgm.$i.$rid.sh
+        echo "export SNIPER_ROOT=\"$SNIPER_ROOT\"" >>  run.sniper.$pgm.$i.$rid.sh
         echo "#CHANGME" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "export SNIPER_Args=#AddMe" >>  run.sniper.$pgm.$i.$rid.sh
+        echo "export SNIPER_ARGS=\"$SNIPER_ARGS\"" >>  run.sniper.$pgm.$i.$rid.sh
         echo "" >>  run.sniper.$pgm.$i.$rid.sh
         echo "#Uncomment for Option 1: Simulate the original application with current region specification" >>  run.sniper.$pgm.$i.$rid.sh
         echo "#time $COMMAND_NATIVE" >>  run.sniper.$pgm.$i.$rid.sh

@@ -29,6 +29,7 @@ fi
 cd $SDE_BUILD_KIT/pinkit/sde-example/example
 make TARGET=intel64 clean;  make TARGET=intel64
 cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
+cd -
 
 # PinPoints phase 2: VALIDATION:  Tools for region validation with ROIPERF
 echo "For older SDE ( sde-external-9.14 or older) set 'export CFLAGS=-DOLDSDE'"
