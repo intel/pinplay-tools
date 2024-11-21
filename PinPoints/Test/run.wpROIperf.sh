@@ -42,6 +42,7 @@ COMMAND="$PIN_ROOT/pin -t $ROIPERF -probecontrol:in probe.in -probecontrol:verbo
   rm probe.in
   echo "RTNstart:main:1" > probe.in
   echo "RTNstop:_exit:1" >> probe.in
+  echo "RTNstop:exit:1" >> probe.in
   echo "clean_slate.sh SKIPPED: Requires sudo"
   #./clean_slate.sh
   export ROIPERF_PERFLIST="0:0,0:1"

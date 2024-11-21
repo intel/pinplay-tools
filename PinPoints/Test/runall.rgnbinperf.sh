@@ -105,8 +105,9 @@ COMMAND="\$PIN_ROOT/pin -t $ROIPERF -probecontrol:in probe.in -probecontrol:verb
       chmod +x run.regionbinperf.sh
 export ROIPERF_PERFLIST="0:0,0:1"
       echo "run.regionbinperf.sh created for $pgm.$i.$rid"
-      echo "~/bin/clean_slate"
-      ~/bin/clean_slate
+      echo "clean_slate.sh SKIPPED: Requires sudo"
+      #echo "./clean_slate"
+      #./clean_slate
       pwd
       for run in 0 1 2 3 4 5 6 7 8
       do
