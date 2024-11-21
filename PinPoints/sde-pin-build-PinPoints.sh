@@ -60,3 +60,6 @@ cd -
 ## pinball2elf 
 cd $PINBALL2ELF/src
 make clean; make all
+
+cd $PINBALL2ELF/pintools/PinballSYSState
+make clean; make
