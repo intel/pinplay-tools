@@ -25,9 +25,12 @@ export PINBALL2ELF="path to the  local clone of the pinball2elf repo"
 Assumption: using “bash”:  put “.” in PATH 
 
 ## Build required tools
+```console
 sde-pin-build-PinPoints.sh
-
+```
 # Example : run PinPoints flow on 'dotproduct-st'
+
+```console
 cd Test
 #edit sde-run.pinpoints.single-threaded.sh : change SLICESEIS/WARMUP_FACTOR/SDE_ARCH if needed
 make clean; make
@@ -40,4 +43,4 @@ run.ROIPerf-validation.sh
 
 #SIMULATOR STAGING
 create.sniper_region_simulation_scripts.sh
-
+```
