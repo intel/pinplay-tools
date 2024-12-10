@@ -40,6 +40,11 @@ from gem5.isas import ISA
 import m5
 
 requires(isa_required = ISA.X86)
+ELFIE_PATH="bwaves-s.1_globalr1.sysstate/bwaves-s.1_globalr1.sim.elfie"
+STARTPC="0x41aeb5"
+STARTPCCOUNT=1
+ENDPC="0x4178f3"
+ENDPCCOUNT=1158101
 
 cache_hierarchy = PrivateL1SharedL2CacheHierarchy(
     l1i_size="32KiB",
@@ -67,11 +72,12 @@ board = SimpleBoard(
 
 board.set_se_binary_workload(
     # pass in the local path to the elfie binary
-    binary = BinaryResource(local_path="bwaves-s.1_globalr1.sysstate/bwaves-s.1_globalr1.sim.elfie")
+    binary = BinaryResource(local_path=ELFIE_PATH)
 )
 
 # pass in the start PC Count marker and the end PC Count marker
-elfie = ELFieInfo( start = PcCountPair(int("0x41aeb5",0),1), end = PcCountPair(int("0x4178f3",0),1158101) ) # for bwaves-s.1.r9
+
+elfie = ELFieInfo(start = PcCountPair(int(STARTPC, 0),STARTPCCOUNT), end = PcCountPair(int(ENDPC, 0),ENDPCCOUNT)) # for bwaves-s.1.r9
 
 # we use the ELFieInfo module to setup the exit events for the start and end
 # marker that we passed in above

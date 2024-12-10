@@ -9,8 +9,6 @@ then
 else
   echo "Using existing event_icount.0.txt files"
 fi
-SNIPER_ROOT="ADD ME"
-SNIPER_ARGS="ADD ME"
   i=1 
     if [ ! -e  whole_program.$i ];
     then
@@ -26,7 +24,6 @@ SNIPER_ARGS="ADD ME"
       #ripno=`grep "^rip" $wpb.global.log | awk '{print $2}'`
       #regfile=`echo $wpb*.0.result | sed '/result/s//reg.bz2/'`
       #rip=`bzcat $regfile| grep -e "^$ripno" | awk '{print $NF}' | head -1 | endian.sh`
-    APPCOMMAND=`grep app-command $wpb.global.log | awk '{print $2}'`
     prefix=`basename $prefix`
     ppdir=$prefix.pp
     ddir=$prefix.Data
@@ -93,24 +90,13 @@ SNIPER_ARGS="ADD ME"
         addr2_start_count=`grep -A4  "Sim-Start tid: 0" $efile | grep "tid: 0 addrcount" | tail -1 | awk '{print $NF}'`
         addr2_end_count=`grep -A4  "Sim-End tid: 0" $efile | grep "tid: 0 addrcount"  | tail -1 | awk '{print $NF}'`
         end_rel_count=`echo $addr2_end_count - $addr2_start_count | bc`
-COMMAND_NATIVE="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startImage+$startOffset:count$startCount -control stop:address:$endImage+$endOffset:count$endCount\" -- $APPCOMMAND"
-COMMAND_RPB="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startPC:count$start_rel_count -control stop:address:$endPC:count$end_rel_count\" --pinballs $rpb"
-COMMAND_ELFIE="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startPC:count$start_rel_count -control stop:address:$endPC:count$end_rel_count\" -- $cmd"
-        echo "!/bin/bash" > run.sniper.$pgm.$i.$rid.sh
-        echo "#CHANGME" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "export SNIPER_ROOT=\"$SNIPER_ROOT\"" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "#CHANGME" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "export SNIPER_ARGS=\"$SNIPER_ARGS\"" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "#Uncomment for Option 1: Simulate the original application with current region specification" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "#time $COMMAND_NATIVE" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "#Uncomment for Option 2: Simulate the region pinball with current region specification" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "#time $COMMAND_RPB" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "" >>  run.sniper.$pgm.$i.$rid.sh
-        chmod +x  run.sniper.$pgm.$i.$rid.sh
-        echo "#Uncomment for Option 3: Simulate the region ELFie with current region specification" >>  run.sniper.$pgm.$i.$rid.sh
-        echo "#time $COMMAND_ELFIE" >>  run.sniper.$pgm.$i.$rid.sh
-        chmod +x  run.sniper.$pgm.$i.$rid.sh
-        echo "  run.sniper.$pgm.$i.$rid.sh created"
+        echo "Creating  gem5.$pgm.$i.$rid.conf.py"
+        cat ../gem5_example_elfie_conf.py.txt | awk -v elfie_path=$cmd -v startpc=$startPC -v startpccount=$start_rel_count -v endpc=$endPC -v endpccount=$end_rel_count '
+         /ELFIE_PATH=/ {printf "ELFIE_PATH=\"%s\"\n", elfie_path; next}
+         /STARTPC=/ {printf "STARTPC=\"%s\"\n", startpc; next}
+         /STARTPCCOUNT=/ {printf "STARTPC=%d\n", startpccount; next}
+         /ENDPC=/ {printf "ENDPC=\"%s\"\n", endpc; next}
+         /ENDPCCOUNT=/ {printf "ENDPCCOUNT=%d\n", endpccount; next}
+         {print $0}
+        ' >  gem5.$pgm.$i.$rid.conf.py
       done

@@ -43,4 +43,5 @@ run.ROIPerf-validation.sh
 
 #SIMULATOR STAGING
 create.sniper_region_simulation_scripts.sh
+create.gem5_region_simulation_scripts.sh
 ```
