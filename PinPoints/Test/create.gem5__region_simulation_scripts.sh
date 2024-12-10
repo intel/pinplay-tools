@@ -94,7 +94,7 @@ fi
         cat ../gem5_example_elfie_conf.py.txt | awk -v elfie_path=$cmd -v startpc=$startPC -v startpccount=$start_rel_count -v endpc=$endPC -v endpccount=$end_rel_count '
          /ELFIE_PATH=/ {printf "ELFIE_PATH=\"%s\"\n", elfie_path; next}
          /STARTPC=/ {printf "STARTPC=\"%s\"\n", startpc; next}
-         /STARTPCCOUNT=/ {printf "STARTPC=%d\n", startpccount; next}
+         /STARTPCCOUNT=/ {printf "STARTPCCOUNT=%d\n", startpccount; next}
          /ENDPC=/ {printf "ENDPC=\"%s\"\n", endpc; next}
          /ENDPCCOUNT=/ {printf "ENDPCCOUNT=%d\n", endpccount; next}
          {print $0}
