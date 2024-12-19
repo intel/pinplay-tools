@@ -59,4 +59,23 @@ make build TARGET=intel64  CFLAGS=$CFLAGS
 make clean TARGET=intel64 
 cd -
 
+## ROIPerf
+### pinball2elf and perf libraries
+cd $PINBALL2ELF/src
+make clean; make all
+cd -
+
+cd $PINBALL2ELF/pintools/ROIProbe
+make clean; make
+cp obj-intel64/pcregions_control.so $SDE_BUILD_KIT/intel64
+cd -
+
+#PinPoints phase 3: SIMULATOR STAGING Tools for elfie generation
+## pinball2elf 
+cd $PINBALL2ELF/src
+make clean; make all
+
+cd $PINBALL2ELF/pintools/PinballSYSState
+make clean; make
+
 find . -name "obj-i*" | xargs rm -r

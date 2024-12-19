@@ -61,9 +61,9 @@ source ./$sch.env.sh
       echo "No per-regions CSV files found in $ddir"
       exit 1
     fi
-      for rcvs in $ddir/*.CSV
+      for rcsv in $ddir/*.CSV
       do
-        rec=`grep "simulation" $rcvs` 
+        rec=`grep "simulation" $rcsv` 
 #cluster 9 from slice 423,global,10,0x4046b0,ft.C.x,0x46b0,5473634570,0x404890,ft.C.x,0x4890,4390787815,11874820,800000135,0.37778,611.963,simulation
         tid=`echo $rec | awk -F"," '{print $2}'`
         rid=`echo $rec | awk -F"," '{print $3}'`
@@ -74,9 +74,23 @@ source ./$sch.env.sh
         endPC=`echo $rec | awk -F"," '{printf $8}'`
         startCount=`echo $rec | awk -F"," '{print $7}'`
         endCount=`echo $rec | awk -F"," '{print $11}'`
+        haswarmup=`grep -c ",warmup" $rcsv`
+        if [ $haswarmup -eq 1 ];
+        then
+          rec=`grep "warmup" $rcsv`
+          wstartImage=`echo $rec | awk -F"," '{printf $5}'`
+          wstartOffset=`echo $rec | awk -F"," '{printf $6}'`
+          wstartPC=`echo $rec | awk -F"," '{printf $4}'`
+          wstartCount=`echo $rec | awk -F"," '{print $7}'`
+        fi
         cfgfile=$b.$i.cfg
         cmd=`grep command $cfgfile | sed '/command: /s///'`
+        if [ $haswarmup -eq 1 ];
+        then
+COMMAND="\$SDE_ROOT/sde64 -t64 \$SDE_ROOT/intel64/sde-global-event-icounter.so -thread_count $OMP_NUM_THREADS -prefix $ppdir/$rpbname -controller_log -controller_olog pcevents.controller.$pgm.$i.$rid.txt -watch_addr $startPC -watch_addr $endPC -xyzzy -warmup -control start:address:$wstartPC:count$wstartCount:global  -control start:address:$startPC:count$startCount:global -control stop:address:$endPC:count$endCount:global -exit_on_stop -replay -replay:addr_trans -replay:basename $wpb -xyzzy -replay:deadlock_timeout 0 -- \$SDE_ROOT/intel64/nullapp"
+        else
 COMMAND="\$SDE_ROOT/sde64 -t64 \$SDE_ROOT/intel64/sde-global-event-icounter.so -thread_count $OMP_NUM_THREADS -prefix $ppdir/$rpbname -controller_log -controller_olog pcevents.controller.$pgm.$i.$rid.txt -watch_addr $startPC -watch_addr $endPC -xyzzy  -control start:address:$startPC:count$startCount:global -control stop:address:$endPC:count$endCount:global -exit_on_stop -replay -replay:addr_trans -replay:basename $wpb -xyzzy -replay:deadlock_timeout 0 -- \$SDE_ROOT/intel64/nullapp"
+        fi
         echo "#!/bin/bash" > run.sde-eventcount.$pgm.$i.$rid.sh
         echo "export SDE_ROOT=$SDE_ROOT" >> run.sde-eventcount.$pgm.$i.$rid.sh
         echo "ulimit -s unlimited" >> run.sde-eventcount.$pgm.$i.$rid.sh

@@ -2,8 +2,8 @@
 #Copyright (C) 2022 Intel Corporation
 #SPDX-License-Identifier: BSD-3-Clause
 export OMP_NUM_THREADS=8
-SLICESIZE=80000000
-WARMUP_FACTOR=0
+SLICESIZE=20000000
+WARMUP_FACTOR=2
 MAXK=5
 PROGRAM=dotproduct
 INPUT=1
@@ -11,6 +11,7 @@ COMMAND="./dotproduct-omp"
 PCCOUNT="--pccount_regions"
 WARMUP="--warmup_factor $WARMUP_FACTOR" 
 GLOBAL="--global_regions"
+SDE_ARCH="-skl" # AMX registers introduced in Sapphire Rapids (-spr) not handled by 'pinball2elf' yet.
 PAR=3 # how many regions to process in parallel. Should have PAR*OMP_NUM_THREADS
   # cores available on the test machine
 
@@ -62,19 +63,19 @@ echo "source ./$sch.env.sh"
 source ./$sch.env.sh
 
 #Whole Program Logging and replay
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL --pintool="sde-global-looppoint.so" --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --delete --mode mt --log_options="-start_address main -log:fat -dcfg -log:mp_mode 0 -log:mp_atomic 0" --replay_options="-replay:strace" -l -r 
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py --pin_options "$SDE_ARCH"  $GLOBAL --pintool="sde-global-looppoint.so" --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --delete --mode mt --log_options="-start_address main -log:fat -dcfg -log:mp_mode 0 -log:mp_atomic 0" --replay_options="-replay:strace" -l -r 
 
 #Profiling for LoopPoint
 DCFG=`ls whole_program.$INPUT/*dcfg*.bz2`
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT --pintool="sde-global-looppoint.so" --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --mode mt -S $SLICESIZE -b --replay_options "-global_profile -emit_vectors 0 -looppoint:global_profile -looppoint:dcfg-file $DCFG -looppoint:main_image_only 0 -looppoint:loop_info $PROGRAM.$INPUT.loop_info.txt"
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py  --pin_options "$SDE_ARCH" $GLOBAL $PCCOUNT --pintool="sde-global-looppoint.so" --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" --mode mt -S $SLICESIZE -b --replay_options "-global_profile -emit_vectors 0 -looppoint:global_profile -looppoint:dcfg-file $DCFG -looppoint:main_image_only 0 -looppoint:loop_info $PROGRAM.$INPUT.loop_info.txt"
 
 #Simpoint
-$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT  --pintool="sde-global-looppoint.so"  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" $PCCOUNT -S $SLICESIZE $WARMUP --maxk=$MAXK --append_status -s 
+$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py  --pin_options "$SDE_ARCH" $GLOBAL $PCCOUNT  --pintool="sde-global-looppoint.so"  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND" $PCCOUNT -S $SLICESIZE $WARMUP --maxk=$MAXK --append_status -s 
 
 #Region pinball generation and replay
 # This does not work because currently we are naming global regions as
 #  expected by the sde_pinpoints.py script
-#$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py $GLOBAL $PCCOUNT  --pintool="sde-global-looppoint.so"  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND"  $PCCOUNT $WARMUP -S $SLICESIZE --mode mt --coop_pinball --append_status --log_options="-dcfg -dcfg:read_dcfg 1 -controller_log -controller_olog sde.looppoint.controller.txt -log:fat -log:region_id" --replay_options="-replay:strace" -p -R 
+#$SDE_BUILD_KIT/pinplay-scripts/sde_pinpoints.py  --pin_options "$SDE_ARCH" $GLOBAL $PCCOUNT  --pintool="sde-global-looppoint.so"  --program_name=$PROGRAM --input_name=$INPUT --command="$COMMAND"  $PCCOUNT $WARMUP -S $SLICESIZE --mode mt --coop_pinball --append_status --log_options="-dcfg -dcfg:read_dcfg 1 -controller_log -controller_olog sde.looppoint.controller.txt -log:fat -log:region_id" --replay_options="-replay:strace" -p -R 
 
 # Create per-region CSV files
 wpb=`ls whole_program.$INPUT/*.address | sed '/.address/s///'`

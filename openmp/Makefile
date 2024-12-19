@@ -6,7 +6,8 @@ CXX ?= g++
 all: dotproduct-omp 
 
 dotproduct-omp: dot_product_openmp.cpp
-	$(CXX) -g -O3 -fopenmp -o dotproduct-omp dot_product_openmp.cpp 
+	#$(CXX) -g -O3 -fopenmp -o dotproduct-omp dot_product_openmp.cpp 
+	$(CXX) -g -O3 -march=skylake -fopenmp -o dotproduct-omp dot_product_openmp.cpp 
 
 clean:
 	rm -rf ./dotproduct-omp ./*.o ./*.S ./base.exe *out *.Data *.pp global.* *.info.* *.txt whole_program.1 run.sde-eventcount*.sh
