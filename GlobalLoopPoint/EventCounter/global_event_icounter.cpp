@@ -18,6 +18,7 @@ END_LEGAL */
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 #include "pin.H"
 #include "dcfg_pin_api.H"
@@ -79,7 +80,17 @@ struct AddrData {
   UINT64  *thread_filtered_addrcount;
 };
 
+struct ImageOffsetData {
+  string image_offset_spec;
+  string img_name;
+  UINT32 offset;
+  struct AddrData addr_data;
+};
+
 struct AddrData *AddrDataArray;
+struct ImageOffsetData *ImageOffsetDataArray;
+static  UINT32 numAddrs = 0;
+static  UINT32 numOffsets = 0;
 
 CONTROL_MANAGER * control_manager = NULL;
 static CONTROLLER::CONTROL_MANAGER control("pinplay:");
@@ -110,12 +121,14 @@ KNOB<UINT32> KnobThreadCount(KNOB_MODE_WRITEONCE, "pintool", "thread_count",
          "0", "Number of threads");
 KNOB<string> KnobPrefix(KNOB_MODE_WRITEONCE, "pintool", "prefix", "",
         "Prefix for output event_icount.tid.txt files");
-KNOB<ADDRINT> KnobWatchAddr(KNOB_MODE_APPEND, "pintool", "watch_addr", "",
-                  "Address to watch");
 KNOB<BOOL>KnobExitOnStop(KNOB_MODE_WRITEONCE,"pintool", "exit_on_stop", "0",
                        "Exit on Sim-End");
 KNOB<BOOL>KnobWarmup(KNOB_MODE_WRITEONCE,"pintool", "warmup", "0",
                        "Treat the first start event as warmup-start");
+KNOB<ADDRINT> KnobWatchAddr(KNOB_MODE_APPEND, "pintool", "watch_addr", "",
+                  "Address to watch");
+KNOB<string> KnobWatchImageOffset(KNOB_MODE_APPEND, "pintool", "watch_image_offset", "",
+        "IMG:Offset to watch");
 
 
 CONTROL_GLOBALPCREGIONS *control_pcregions = NULL;
@@ -123,7 +136,6 @@ CONTROL_GLOBALIREGIONS *control_iregions = NULL;
 
 static void PrintAddrcount(THREADID tid, string eventstr)
 {
- UINT32 numAddrs = KnobWatchAddr.NumberOfValues();
  for (UINT32 a = 0; a < numAddrs ; a++)
  {
    struct AddrData *ad = &AddrDataArray[a];
@@ -155,6 +167,47 @@ static void PrintAddrcount(THREADID tid, string eventstr)
       fprintf(out_fp[i], "%s %x tid: %d filtered_addrcount %lld addrcount %lld", eventstr.c_str(), ad->addr, i, tfilteredaddrcount, taddrcount) ;
     else
       fprintf(out_fp[i], "%s %x tid: %d addrcount %lld", eventstr.c_str(), ad->addr, i, taddrcount) ;
+#endif
+      fprintf(out_fp[i], "\n");
+      fflush(out_fp[i]);
+    }
+ }
+}
+
+
+static void PrintImageOffsetcount(THREADID tid, string eventstr)
+{
+ for (UINT32 a = 0; a < numOffsets ; a++)
+ {
+   struct ImageOffsetData *ad = &ImageOffsetDataArray[a];
+   cerr << "addr 0x" << hex << ad->addr_data.addr << " global count " << dec << ad->addr_data.global_addr_counter._count <<   endl;
+  UINT32 tcount = KnobThreadCount; 
+    for (UINT32 i = 0; i < tcount; i++)
+    {
+      UINT64 taddrcount = ad->addr_data.thread_addrcount[i];
+      UINT64 tfilteredaddrcount = taddrcount - ad->addr_data.thread_filtered_addrcount[i];
+#ifdef TARGET_IA32E
+    if(filter_used)
+      fprintf(out_fp[i], "%s%s %lx global_filtered_addrcount: %ld global_addrcount: %ld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, ad->addr_data.global_addr_counter._count - ad->addr_data.global_filtered_addr_counter._count, ad->addr_data.global_addr_counter._count);
+    else
+      fprintf(out_fp[i], "%s%s %lx  global_addrcount: %ld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, ad->addr_data.global_addr_counter._count);
+#else
+    if(filter_used)
+      fprintf(out_fp[i], "%s%s %x global_filtered_addrcount: %lld global_addrcount: %lld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, ad->addr_data.global_addr_counter._count - ad->addr_data.global_filtered_addr_counter._count, ad->addr_data.global_addr_counter._count);
+    else
+      fprintf(out_fp[i], "%s%s %x  global_addrcount: %lld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, ad->addr_data.global_addr_counter._count);
+#endif
+    fprintf(out_fp[i], "\n");
+#ifdef TARGET_IA32E
+    if(filter_used)
+      fprintf(out_fp[i], "%s%s %lx tid: %d filtered_addrcount %ld addrcount %ld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, i, tfilteredaddrcount, taddrcount) ;
+    else
+      fprintf(out_fp[i], "%s%s %lx tid: %d addrcount %ld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, i, taddrcount) ;
+#else
+    if(filter_used)
+      fprintf(out_fp[i], "%s%s %x tid: %d filtered_addrcount %lld addrcount %lld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, i, tfilteredaddrcount, taddrcount) ;
+    else
+      fprintf(out_fp[i], "%s%s %x tid: %d addrcount %lld", eventstr.c_str(),ad->image_offset_spec.c_str(), ad->addr_data.addr, i, taddrcount) ;
 #endif
       fprintf(out_fp[i], "\n");
       fflush(out_fp[i]);
@@ -263,7 +316,8 @@ VOID Handler(EVENT_TYPE ev, VOID * v, CONTEXT * ctxt, VOID * ip,
     cerr <<  " " << eventstr << endl;
 
     PrintIcount(tid, eventstr);
-    PrintAddrcount(tid, "\tMarker ");
+    if(numAddrs) PrintAddrcount(tid, "\tMarker ");
+    if(numOffsets) PrintImageOffsetcount(tid, "\tImage+Offset:");
     if((ev == EVENT_STOP) && KnobExitOnStop)
       PIN_ExitProcess(0);
     PIN_ReleaseLock(&output_lock);
@@ -359,6 +413,20 @@ static VOID  AddrBefore_filtered(THREADID tid, VOID * v)
     ad->thread_filtered_addrcount[tid]+=1;
 }
 
+static VOID  AddrBeforeAlt(THREADID tid, VOID * v)
+{
+    struct ImageOffsetData * ad = (struct ImageOffsetData *) v;
+    ATOMIC::OPS::Increment<UINT64>(&(ad->addr_data.global_addr_counter._count), 1);
+    ad->addr_data.thread_addrcount[tid]+=1;
+}
+
+static VOID  AddrBefore_filteredAlt(THREADID tid, VOID * v)
+{
+    struct ImageOffsetData * ad = (struct ImageOffsetData *) v;
+    ATOMIC::OPS::Increment<UINT64>(&(ad->addr_data.global_filtered_addr_counter._count), 1);
+    ad->addr_data.thread_filtered_addrcount[tid]+=1;
+}
+
 static VOID ThreadStart(THREADID tid, CONTEXT *ctxt, INT32 flags, VOID *v)
 {
   if(tid == KnobThreadCount) 
@@ -369,9 +437,26 @@ static VOID ThreadStart(THREADID tid, CONTEXT *ctxt, INT32 flags, VOID *v)
   }
 }
 
+string main_img_name;
+ADDRINT main_img_low_address;
+VOID ImageLoad(IMG img, VOID* v)
+{
+  if(!numOffsets) return;
+  for (UINT32 a = 0; a < numOffsets ; a++)
+  {
+    string img_name = ImageOffsetDataArray[a].img_name;
+    UINT32 offset = ImageOffsetDataArray[a].offset;
+    if(IMG_Name(img).find(img_name) != string::npos) 
+    {
+      ImageOffsetDataArray[a].addr_data.addr = 
+           IMG_LowAddress(img)+offset;
+      cerr << "Watching IMG+offset: " <<  ImageOffsetDataArray[a].img_name << "+" << hex << ImageOffsetDataArray[a].offset << " addr 0x" << hex << ImageOffsetDataArray[a].addr_data.addr << endl;
+    }
+  }
+}
+
 VOID Instruction(INS ins, BOOL trace_filtered, VOID *v)
 {
-  UINT32 numAddrs = KnobWatchAddr.NumberOfValues();
   for (UINT32 a = 0; a < numAddrs ; a++)
   {
     if(INS_Address(ins) == AddrDataArray[a].addr)
@@ -384,6 +469,25 @@ VOID Instruction(INS ins, BOOL trace_filtered, VOID *v)
       INS_InsertCall(ins, IPOINT_BEFORE, AFUNPTR(AddrBefore_filtered),
                        IARG_THREAD_ID,
                        IARG_PTR, (VOID *)&AddrDataArray[a],
+                       IARG_END);
+    }
+  }
+}
+
+VOID InstructionAlt(INS ins, BOOL trace_filtered, VOID *v)
+{
+  for (UINT32 a = 0; a < numOffsets ; a++)
+  {
+    if(INS_Address(ins) == ImageOffsetDataArray[a].addr_data.addr)
+    {
+      INS_InsertCall(ins, IPOINT_BEFORE, AFUNPTR(AddrBeforeAlt),
+                       IARG_THREAD_ID,
+                       IARG_PTR, (VOID *)&ImageOffsetDataArray[a],
+                       IARG_END);
+      if (trace_filtered)
+      INS_InsertCall(ins, IPOINT_BEFORE, AFUNPTR(AddrBefore_filteredAlt),
+                       IARG_THREAD_ID,
+                       IARG_PTR, (VOID *)&ImageOffsetDataArray[a],
                        IARG_END);
     }
   }
@@ -431,9 +535,56 @@ VOID Trace(TRACE trace, VOID *v)
 #endif
      for (INS ins = BBL_InsHead(bbl); INS_Valid(ins); ins = INS_Next(ins))
      {
-      Instruction(ins, filtered, v);
+      if(numAddrs)Instruction(ins, filtered, v);
+      if(numOffsets)InstructionAlt(ins, filtered, v);
      }
     }
+}
+
+static void CheckWatchKnobs()
+{
+ numAddrs = KnobWatchAddr.NumberOfValues();
+ numOffsets = KnobWatchImageOffset.NumberOfValues();
+ // The default empty value counts as 1 ; fix that
+ if((numAddrs == 1) && KnobWatchAddr == 0) numAddrs = 0;
+ if((numOffsets == 1) && KnobWatchImageOffset.Value().empty()) numOffsets = 0;
+ if(numAddrs && numOffsets)
+ {
+   cerr << "ERROR: Cannot combine '-watch_addr' and '-watch_image_offset'\n";
+   cerr << "numAddrs " << numAddrs << "numOffsets " << numOffsets << endl;
+   PIN_ExitProcess(1);
+ }
+ cerr << "CheckWatchKnobs():  numAddrs " << numAddrs << " numOffsets " << numOffsets << endl;
+}
+
+
+void split_image_offset(string image_offset_spec, string *img_name_ptr, UINT32 *offset_ptr) 
+{
+    string img_name;
+    UINT32 offset;
+
+    // Find the position of the plus
+    size_t plus_pos = image_offset_spec.find('+');
+    
+    // Check if plus was found
+    if (plus_pos != std::string::npos) {
+        // Extract img_name using substr
+        img_name = image_offset_spec.substr(0, plus_pos);
+        
+        // Extract offset using substr and convert to uint32_t
+        string offset_str = image_offset_spec.substr(plus_pos + 1);
+        istringstream(offset_str) >> hex >> offset; // Convert string to UINT32
+
+        // Output the results
+        std::cout << "Image Name: " << img_name << std::endl;
+        std::cout << "Offset: 0x" << hex << offset << std::endl;
+    } else {
+        std::cerr << "Invalid format. Expected 'img_name:offset'." << std::endl;
+    }
+
+   *img_name_ptr = img_name;
+   *offset_ptr = offset;
+    return;
 }
 
 static void OpenThreadFiles()
@@ -461,17 +612,36 @@ static void OpenThreadFiles()
     ASSERTX(out_fp[i]);
  }
 
- UINT32 numAddrs = KnobWatchAddr.NumberOfValues();
-
- AddrDataArray = new struct AddrData [numAddrs]();
- for (UINT32 a = 0; a < numAddrs ; a++)
+ if(numAddrs)
  {
-   AddrDataArray[a].addr = KnobWatchAddr.Value(a);
-   cerr << "Watching addr 0x" << hex << AddrDataArray[a].addr << endl;
-   AddrDataArray[a].thread_addrcount = new UINT64 [tcount]();
-   AddrDataArray[a].thread_filtered_addrcount = new UINT64 [tcount]();
+  AddrDataArray = new struct AddrData [numAddrs]();
+  for (UINT32 a = 0; a < numAddrs ; a++)
+  {
+    AddrDataArray[a].addr = KnobWatchAddr.Value(a);
+    cerr << "Watching addr 0x" << hex << AddrDataArray[a].addr << endl;
+    AddrDataArray[a].thread_addrcount = new UINT64 [tcount]();
+    AddrDataArray[a].thread_filtered_addrcount = new UINT64 [tcount]();
+  }
  }
 
+ if(numOffsets)
+ {
+  ImageOffsetDataArray = new struct ImageOffsetData [numOffsets]();
+  for (UINT32 a = 0; a < numOffsets ; a++)
+  {
+    string image_offset_spec = KnobWatchImageOffset.Value(a);
+    ImageOffsetDataArray[a].image_offset_spec = image_offset_spec;
+    string img_name;
+    UINT32 offset;
+    split_image_offset(image_offset_spec, &img_name, &offset);
+    ImageOffsetDataArray[a].img_name = img_name;
+    ImageOffsetDataArray[a].offset = offset;
+    ImageOffsetDataArray[a].addr_data.addr = 0; // to be updated
+    cerr << "Watching IMG+offset: " <<  ImageOffsetDataArray[a].img_name << "+" << hex << ImageOffsetDataArray[a].offset << endl;
+    ImageOffsetDataArray[a].addr_data.thread_addrcount = new UINT64 [tcount]();
+    ImageOffsetDataArray[a].addr_data.thread_filtered_addrcount = new UINT64 [tcount]();
+  }
+ }
 }
  
 INT32 Usage()
@@ -488,6 +658,7 @@ INT32 Usage()
 // argc, argv are the entire command line, including pin -t <toolname> -- ...
 int main(int argc, char * argv[])
 {
+
   control_pcregions = new CONTROL_GLOBALPCREGIONS(args);
   control_iregions = new CONTROL_GLOBALIREGIONS(args);
 #if defined(SDE_INIT)
@@ -501,7 +672,8 @@ int main(int argc, char * argv[])
 #endif
     PIN_InitSymbols();
 
-    OpenThreadFiles();
+   CheckWatchKnobs();
+   OpenThreadFiles();
 
 #if defined(SDE_INIT)
     // This is a replay-only tool (for now)
@@ -534,6 +706,7 @@ int main(int argc, char * argv[])
     PIN_InitLock(&output_lock);
     control_manager->RegisterHandler(Handler, 0, 0, LateHandler);
 
+    IMG_AddInstrumentFunction(ImageLoad, 0);
     PIN_AddThreadStartFunction(ThreadStart, 0);
     TRACE_AddInstrumentFunction(Trace, 0);
     PIN_AddFiniFunction(ProcessFini, 0);
