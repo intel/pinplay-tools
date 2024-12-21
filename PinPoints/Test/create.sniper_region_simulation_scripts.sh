@@ -56,11 +56,14 @@ SNIPER_ARGS="ADD ME"
         endCount=`echo $rec | awk -F"," '{print $11}'`
         cfgfile=$b.$i.cfg
         rpb=`ls $ppdir/*.address | grep $region |  sed '/.address/s///'`
-        cmd="./$rpb.sim.elfie"
-        efile=`ls $ppdir/$rpbname.event_icount.0.txt`
-        if [ ! -e $efile ];
+        elfiename="$rpb.sim.elfie"
+        elfiename=`basename $elfiename`
+        elfiepath=`find . -name $elfiename`
+        elfiedir=`dirname $elfiepath`
+        eventfile=`ls $ppdir/$rpbname.event_icount.0.txt`
+        if [ ! -e $eventfile ];
         then
-          echo "ERROR: $efile not found"
+          echo "ERROR: $eventfile not found"
           exit 1
         fi
 #Warmup-Start global_icount: 150006
@@ -84,18 +87,18 @@ SNIPER_ARGS="ADD ME"
         haswarmup=`grep -c ",warmup" $rcsv`
         if [ $haswarmup -eq 1 ];
         then
-          addr1_start_count=`grep -A2  "Warmup-Start tid: 0" $efile | grep "tid: 0 addrcount" | awk '{print $NF}'`
-        addr1_end_count=`grep -A2  "Sim-Start tid: 0" $efile | grep "tid: 0 addrcount" | awk '{print $NF}'`
+          addr1_start_count=`grep -A2  "Warmup-Start tid: 0" $eventfile | grep "tid: 0 addrcount" | awk '{print $NF}'`
+        addr1_end_count=`grep -A2  "Sim-Start tid: 0" $eventfile | grep "tid: 0 addrcount" | awk '{print $NF}'`
         start_rel_count=`echo $addr1_end_count - $addr1_start_count | bc`
         else
             start_rel_count="1"
         fi
-        addr2_start_count=`grep -A4  "Sim-Start tid: 0" $efile | grep "tid: 0 addrcount" | tail -1 | awk '{print $NF}'`
-        addr2_end_count=`grep -A4  "Sim-End tid: 0" $efile | grep "tid: 0 addrcount"  | tail -1 | awk '{print $NF}'`
+        addr2_start_count=`grep -A4  "Sim-Start tid: 0" $eventfile | grep "tid: 0 addrcount" | tail -1 | awk '{print $NF}'`
+        addr2_end_count=`grep -A4  "Sim-End tid: 0" $eventfile | grep "tid: 0 addrcount"  | tail -1 | awk '{print $NF}'`
         end_rel_count=`echo $addr2_end_count - $addr2_start_count | bc`
 COMMAND_NATIVE="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startImage+$startOffset:count$startCount -control stop:address:$endImage+$endOffset:count$endCount\" -- $APPCOMMAND"
 COMMAND_RPB="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startPC:count$start_rel_count -control stop:address:$endPC:count$end_rel_count\" --pinballs $rpb"
-COMMAND_ELFIE="\$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startPC:count$start_rel_count -control stop:address:$endPC:count$end_rel_count\" -- $cmd"
+COMMAND_ELFIE="cd $elfiedir; \$SNIPER_ROOT/run_sniper \$SNIPER_ARGS --trace_args=\"-control start:address:$startPC:count$start_rel_count -control stop:address:$endPC:count$end_rel_count\" -- ./$elfiename"
         echo "!/bin/bash" > run.sniper.$pgm.$i.$rid.sh
         echo "#CHANGME" >>  run.sniper.$pgm.$i.$rid.sh
         echo "export SNIPER_ROOT=\"$SNIPER_ROOT\"" >>  run.sniper.$pgm.$i.$rid.sh

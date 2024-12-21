@@ -91,14 +91,14 @@ source ./$sch.env.sh
         fi
         fullrpbname=$rpbname"_warmupendPC"$wePC"_warmupendPCCount"$weCount"_warmupendlength"$wLength"_endPC"$sePC"_endPCCount"$seCount"_length"$sLength"_multiplier"$mult"_"$ridlong"_"$weight
         rpbname=$prefix"_"$region
-        efile=`ls $ppdir/$rpbname.event_icount.0.txt`
-        if [ ! -e $efile ];
+        eventfile=`ls $ppdir/$rpbname.event_icount.0.txt`
+        if [ ! -e $eventfile ];
         then
-          echo "ERROR: $efile not found"
+          echo "ERROR: $eventfile not found"
           exit 1
         fi
-        tid0sicount=`grep "Sim-Start tid: 0" $efile | awk '{print $NF}'`
-        tid0eicount=`grep "Sim-End tid: 0" $efile | awk '{print $NF}'`
+        tid0sicount=`grep "Sim-Start tid: 0" $eventfile | awk '{print $NF}'`
+        tid0eicount=`grep "Sim-End tid: 0" $eventfile | awk '{print $NF}'`
         rm probe.in
     #echo "start:main:1" > probe.in
     #echo "stop:exit:1" >> probe.in

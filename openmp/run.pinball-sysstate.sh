@@ -31,5 +31,5 @@ for rpb in `ls $pdir/*.address`
 do
   rpbname=`echo $rpb | sed '/.address/s///'`
   echo "running SYSSTATE for $rpbname"
-  $SDE_BUILD_KIT/sde64 $SDE_ARCH -t64 $SDE_BUILD_KIT/intel64/sde-pinball-sysstate.so -replay -replay:addr_trans -replay:basename $rpbname -sysstate:out $rpb -- $SDE_BUILD_KIT/intel64/nullapp 
+  $SDE_BUILD_KIT/sde64 $SDE_ARCH -t64 $SDE_BUILD_KIT/intel64/sde-pinball-sysstate.so -replay -replay:addr_trans -replay:basename $rpbname -sysstate:out $rpbname -- $SDE_BUILD_KIT/intel64/nullapp 
 done

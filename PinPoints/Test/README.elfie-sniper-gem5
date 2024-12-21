@@ -1,0 +1,38 @@
+Pre-requisites:
+--------------
+ Region pinballs created using
+   sde-run.looppoint.global_looppoint.concat.filter.flowcontrol.sh
+    or similar script
+
+Steps:
+-----
+  1. Create 'sysstate' directory for each region pinball
+  % run.pinball-sysstate.sh
+
+  2. Test 'sysstate' created above
+  % run.pinball-sysstate-consume.sh
+    Replays each region pinball without injection while consuming sysstate. 
+    If replay.txt shows that each thread finished with expected inscount, the replay was 'good'. This implies the elfie may run well as well.
+
+  3. Create a 'sim.elfie' for each region pinball
+   % run.pinball2elf.sh
+      This will be created in the corresponding sysstate directory.
+
+  4. Test the 'sim.elfie' for each region pinball
+     % run.elfies.sh 
+      This will run region 'sim.elfie' from the corresponding sysstate directory. The run will be under 'per stat -e instructions:u'.
+   It is okay if you see seg-faults or other errors here as we are not stopping the elfie run gracefully.
+   As long the instructions:u number reported by 'perf stat' is higher than the expected warmup + simulation region length, the elfie is 'good'.
+
+  5. Create sniper scripts for running each region simulation
+   % create.sniper_region_simulation_scripts.sh
+    Will create a run.sniper.*.sh script for each region. These scripts offer three ways to simulate with Sniper:
+   Option 1: Simulate the original application with current region specification
+   Option 2: Simulate the region pinball with current region specification
+   Option 3: Simulate the region ELFie with current region specification
+       (the elfie must by run from the sysstate directory)
+
+  5. Create GEM5 configs for running each region simulation  with elfie.
+   % create.gem5__region_simulation_configs.sh
+    Will create a gem5.*.conf script for each region. 
+    OPEN/TODO : need to make sure this config file is put in the sysstate directory where elfie exists and gem5 simulatiion is run from there.

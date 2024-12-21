@@ -32,13 +32,13 @@ do
   rpbname=`echo $rpb | sed '/.address/s///'`
   echo "Injection-less replay with  SYSSTATE for $rpbname"
   #$SDE_BUILD_KIT/sde64 $SDE_ARCH -t64 $SDE_BUILD_KIT/intel64/sde-pinball-sysstate.so -replay -replay:injection 0 -replay:addr_trans -replay:basename $rpbname -sysstate:in $rpb.sysstate -sysstate:verbose   -- $SDE_BUILD_KIT/intel64/nullapp 
-  $SDE_BUILD_KIT/sde64 $SDE_ARCH -t64 $SDE_BUILD_KIT/intel64/sde-pinball-sysstate.so -replay -replay:injection 0 -replay:addr_trans -replay:basename $rpbname -sysstate:in $rpb.sysstate -- $SDE_BUILD_KIT/intel64/nullapp 
+  $SDE_BUILD_KIT/sde64 $SDE_ARCH -t64 $SDE_BUILD_KIT/intel64/sde-pinball-sysstate.so -replay -replay:injection 0 -replay:addr_trans -replay:basename $rpbname -sysstate:in $rpbname.sysstate -- $SDE_BUILD_KIT/intel64/nullapp 
 done
 let n=1
 for rpb in `ls $pdir/*.address`
 do
   rpbname=`echo $rpb | sed '/.address/s///'`
-  inscount=`grep instructions $rpbname.replay.txt | awk '{print $(NF-1)}'`
+  inscount=`grep -e 'instructions$' $rpbname.replay.txt | awk '{print $(NF-1)}'`
   echo "pinball $n: $rpbname replay with sysstate inscount: $inscount"
   let n=n+1
 done
