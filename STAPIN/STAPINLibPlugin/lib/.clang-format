@@ -1,0 +1,153 @@
+# Requires clang version >= 3.8
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: Cpp11
+
+#
+IndentWidth: 4
+ColumnLimit: 130
+UseTab: Never
+
+# Version 9.0 does not seem to recognize it
+# switch (x)
+# {
+#   case 1: // case keyword indented compared to switch keyword
+#   {
+#   }
+# }
+IndentCaseBlocks: false
+IndentCaseLabels: true
+NamespaceIndentation: All
+
+# Always break after bracket open
+# if ()
+# { ...
+# switch ()
+# { ...
+# int func ()
+# { ...
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterCaseLabel: true
+    AfterClass: true
+    AfterControlStatement: Always
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: true
+    AfterObjCDeclaration: true
+    AfterStruct: true
+    AfterUnion: true
+    AfterExternBlock: true
+    BeforeCatch: true
+    BeforeElse: true
+    BeforeLambdaBody: true
+    BeforeWhile: true
+    SplitEmptyFunction: false
+    SplitEmptyRecord: true
+    SplitEmptyNamespace: true
+
+# inline func(int x) { return x; }
+AllowShortFunctionsOnASingleLine: All
+
+# if (x == 4) x++;
+AllowShortIfStatementsOnASingleLine: WithoutElse
+
+# while (x < 34) 
+#{
+#    x++;
+#}
+AllowShortBlocksOnASingleLine: Never
+
+# while (x) continue;
+AllowShortLoopsOnASingleLine: false
+
+# namespace x 
+# {
+# } //namespace x
+FixNamespaceComments: true
+
+#if FOO
+#if BAR
+#include <foo>
+#endif
+#endif
+IndentPPDirectives: None
+
+#int* a;
+PointerAlignment: Left
+
+# Long comments broken in lines
+ReflowComments: false
+
+# (int)var
+SpaceAfterCStyleCast: false
+
+# x = (int)var
+# last review point
+SpacesInCStyleCastParentheses: false
+
+# !flag
+SpaceAfterLogicalNot: false
+
+# template<int> void foo();
+SpaceAfterTemplateKeyword: false
+
+# var = x;
+SpaceBeforeAssignmentOperators: true
+
+# vector<int> {...}
+SpaceBeforeCpp11BracedList: true
+
+# class foo : bar
+SpaceBeforeInheritanceColon: true
+
+# if ()
+# for ()
+# while ()
+SpaceBeforeParens: ControlStatements
+
+# int func()
+SpaceInEmptyParentheses: false
+
+# Version 9.0 does not seem to recognize it
+# int a[5]
+SpaceBeforeSquareBrackets: false
+
+# Because clang breaks on: typedef std::map<BBL, std::pair<REGSET, FLAGS>>:
+# consecutive >>... we use the space in 
+# static_cast< int >(some_var)
+SpacesInAngles:  true
+
+# Version 9.0 does not seem to recognize it
+# if (a)
+SpacesInConditionalStatement: false
+
+# public / private keywords
+# class x 
+# {
+#   private:
+#   public:
+#     int abc;
+# }
+AccessModifierOffset: -2
+
+# int a            = 1;
+# int somelongname = 2;
+AlignConsecutiveAssignments: true
+
+# if (foo)
+# { // no empty line below
+#     func();
+# }
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# does not sort include files
+SortIncludes: false
+
+# Three or more empty lines are reduced to two
+MaxEmptyLinesToKeep: 1
+
+# define A    \
+#    int aaa; \
+#    int b;   \
+AlignEscapedNewlines: Left
