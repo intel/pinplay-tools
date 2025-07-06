@@ -1,0 +1,8 @@
+{
+    "ExtraRPCPlugins": [
+        {
+            "lib": "libstapin-plugin.so",
+            "name": "stapin-plugin"
+        }
+    ]
+}
