@@ -1,4 +1,4 @@
-Pin Record/Replay Tools
+Pin Record/Replay Tools:
 
 A collection of C/C++ programs and Python scripts to be used in conjunction with Intel Software Development Emulator (Intel SDE, available externally separately). The purpose is to use record/replay functionality in SDE for program analysis.
 
