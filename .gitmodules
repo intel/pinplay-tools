@@ -1,3 +1,0 @@
-[submodule "STAPIN/STAPINLibPlugin/external/tcf.agent"]
-	path = STAPIN/STAPINLibPlugin/external/tcf.agent
-	url = https://gitlab.eclipse.org/eclipse/tcf/tcf.agent.git
